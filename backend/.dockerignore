@@ -1,0 +1,36 @@
+# Git
+.git
+.gitignore
+
+# Node modules (these will be installed INSIDE the container)
+node_modules
+
+# Local environment files
+.env
+.env.*
+!/.env.example # if you have one you want to include
+
+# IDE and OS files
+.vscode
+.idea
+*.swp
+*.swo
+Thumbs.db
+.DS_Store
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs
+*.log
+
+# Build outputs (if any are generated locally and not needed for the image)
+dist
+build
+
+# Test coverage reports
+coverage
+lcov-report
+
+# Other temporary files or local configs

@@ -1,6 +1,6 @@
 //tests/setup.js
 const { PrismaClient } = require('@prisma/client');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 // Use a separate test database
 process.env.DATABASE_URL = process.env.TEST_DATABASE_URL || 'postgresql://postgres:321123@localhost:5432/sustracker_test';
