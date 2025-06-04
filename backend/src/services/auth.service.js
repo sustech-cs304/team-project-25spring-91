@@ -1,5 +1,5 @@
 // src/services/auth.service.js
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const prisma = require('../config/prisma');
 const { ApiError } = require('../utils/ApiError');
