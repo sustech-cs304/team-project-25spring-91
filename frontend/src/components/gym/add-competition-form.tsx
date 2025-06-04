@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import Image from 'next/image'
 import {
   Select,
   SelectContent,
@@ -202,7 +203,7 @@ const AddCompetitionForm = ({ gym, onClose }: AddCompetitionFormProps) => {
 
   const openTaskDialog = (taskIndex?: number) => {
     setShowPreview(false)
-    
+
     if (taskIndex !== undefined) {
       setEditingTaskIndex(taskIndex)
       setCurrentTask(tasks[taskIndex])
@@ -282,7 +283,7 @@ const AddCompetitionForm = ({ gym, onClose }: AddCompetitionFormProps) => {
 
     const startDate = new Date(formData.startDate)
     const endDate = new Date(formData.endDate)
-    
+
     if (startDate >= endDate) {
       toast.error('End date must be after start date')
       return false
@@ -307,86 +308,87 @@ const AddCompetitionForm = ({ gym, onClose }: AddCompetitionFormProps) => {
     return true
   }
 
-const handleSubmit = async () => {
-  if (!validateForm()) return
+  const handleSubmit = async () => {
+    if (!validateForm()) return
 
-  setIsSubmitting(true)
+    setIsSubmitting(true)
 
-  try {
-    // Create competition with JSON data (no FormData)
-    const competitionData = {
-      name: formData.name.trim(),
-      description: formData.description.trim(),
-      startDate: new Date(formData.startDate).toISOString(),
-      endDate: new Date(formData.endDate).toISOString(),
-      maxParticipants: parseInt(formData.maxParticipants),
-      gymId: gym.id,
-    }
-
-    const competitionResponse = await api.post('/competitions', competitionData, {
-      headers: { 'Content-Type': 'application/json' },
-    })
-
-    const competitionId = competitionResponse.data.id || 
-                         competitionResponse.data.data?.id ||
-                         competitionResponse.data.competition?.id
-
-    if (!competitionId) {
-      throw new Error('Competition ID not returned from server')
-    }
-
-    // Update with image if exists
-    if (imageFile) {
-      const imageFormData = new FormData()
-      imageFormData.append('image', imageFile)
-      
-      try {
-        await api.patch(`/competitions/${competitionId}`, imageFormData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        })
-      } catch (imageError) {
-        console.warn('Image upload failed, but competition was created:', imageError)
+    try {
+      // Create competition with JSON data (no FormData)
+      const competitionData = {
+        name: formData.name.trim(),
+        description: formData.description.trim(),
+        startDate: new Date(formData.startDate).toISOString(),
+        endDate: new Date(formData.endDate).toISOString(),
+        maxParticipants: parseInt(formData.maxParticipants),
+        gymId: gym.id,
       }
-    }
 
-    // Create all tasks
-    const taskPromises = tasks.map((task) => {
-      const taskData = {
-        name: task.name.trim(),
-        description: task.description.trim(),
-        exerciseId: parseInt(task.exerciseId),
-        targetValue: parseInt(task.targetValue),
-        unit: task.unit,
-        pointsValue: parseInt(task.pointsValue),
+
+
+      const competitionResponse = await api.post('/competitions', competitionData, {
+        headers: { 'Content-Type': 'application/json' },
+      })
+
+      const competitionId = competitionResponse.data.id ||
+        competitionResponse.data.data?.id ||
+        competitionResponse.data.competition?.id
+
+      if (!competitionId) {
+        throw new Error('Competition ID not returned from server')
       }
-      
-      return api.post(`/competitions/${competitionId}/tasks`, taskData)
-    })
 
-    await Promise.all(taskPromises)
+      if (imageFile) {
+        const imageFormData = new FormData()
+        imageFormData.append('image', imageFile)
 
-    toast.success('Competition and all tasks created successfully!')
-    onClose()
-  } catch (error: any) {
-    console.error('Error creating competition:', error)
-    
-    if (error.response?.data?.error && Array.isArray(error.response.data.error)) {
-      const validationErrors = error.response.data.error
-      const errorMessages = validationErrors.map((err: any) => 
-        `${err.path}: ${err.message}`
-      ).join(', ')
-      toast.error(`Validation errors: ${errorMessages}`)
-    } else {
-      const errorMessage = error.response?.data?.message || 
-                         error.response?.data?.error || 
-                         error.message
-      toast.error(`Failed to create competition: ${errorMessage}`)
+        try {
+          await api.put(`/competitions/${competitionId}`, imageFormData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+          })
+        } catch (imageError) {
+          console.warn('Image upload failed, but competition was created:', imageError)
+        }
+      }
+
+      // Create all tasks
+      const taskPromises = tasks.map((task) => {
+        const taskData = {
+          name: task.name.trim(),
+          description: task.description.trim(),
+          exerciseId: parseInt(task.exerciseId),
+          targetValue: parseInt(task.targetValue),
+          unit: task.unit,
+          pointsValue: parseInt(task.pointsValue),
+        }
+
+        return api.post(`/competitions/${competitionId}/tasks`, taskData)
+      })
+
+      await Promise.all(taskPromises)
+
+      toast.success('Competition and all tasks created successfully!')
+      onClose()
+    } catch (error: any) {
+      console.error('Error creating competition:', error)
+
+      if (error.response?.data?.error && Array.isArray(error.response.data.error)) {
+        const validationErrors = error.response.data.error
+        const errorMessages = validationErrors.map((err: any) =>
+          `${err.path}: ${err.message}`
+        ).join(', ')
+        toast.error(`Validation errors: ${errorMessages}`)
+      } else {
+        const errorMessage = error.response?.data?.message ||
+          error.response?.data?.error ||
+          error.message
+        toast.error(`Failed to create competition: ${errorMessage}`)
+      }
+    } finally {
+      setIsSubmitting(false)
+      setShowPreview(false)
     }
-  } finally {
-    setIsSubmitting(false)
-    setShowPreview(false)
   }
-}
 
 
 
@@ -482,7 +484,7 @@ const handleSubmit = async () => {
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
               {imagePreview ? (
                 <div className="relative">
-                  <img
+                  <Image
                     src={imagePreview}
                     alt="Preview"
                     className="w-full h-32 object-cover rounded"
@@ -491,7 +493,7 @@ const handleSubmit = async () => {
                     type="button"
                     variant="destructive"
                     size="sm"
-                    className="absolute top-2 right-2"
+                    className="absolute top-2 right-2 cursor-pointer"
                     onClick={removeImage}
                   >
                     <X className="h-4 w-4" />
@@ -524,7 +526,7 @@ const handleSubmit = async () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold">Competition Tasks *</h3>
-            <Button onClick={() => openTaskDialog()} size="sm">
+            <Button onClick={() => openTaskDialog()} size="sm" className='cursor-pointer'>
               <Plus className="h-4 w-4 mr-2" />
               Add Task
             </Button>
@@ -567,6 +569,7 @@ const handleSubmit = async () => {
                     <Button
                       variant="outline"
                       size="sm"
+                      className='cursor-pointer'
                       onClick={() => openTaskDialog(index)}
                     >
                       <Edit className="h-4 w-4" />
@@ -574,6 +577,7 @@ const handleSubmit = async () => {
                     <Button
                       variant="destructive"
                       size="sm"
+                      className='cursor-pointer'
                       onClick={() => removeTask(index)}
                     >
                       <Trash2 className="h-4 w-4" />
@@ -591,11 +595,11 @@ const handleSubmit = async () => {
             type="button"
             variant="outline"
             onClick={handlePreviewOpen}
-            className="flex-1"
+            className="flex-1 cursor-pointer"
           >
             Preview
           </Button>
-          <Button type="button" variant="outline" onClick={onClose}>
+          <Button type="button" variant="outline" onClick={onClose} className='cursor-pointer'>
             Cancel
           </Button>
         </div>
@@ -754,10 +758,10 @@ const handleSubmit = async () => {
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={closeTaskDialog}>
+            <Button variant="outline" className='cursor-pointer' onClick={closeTaskDialog}>
               Cancel
             </Button>
-            <Button onClick={saveTask}>
+            <Button onClick={saveTask} className='cursor-pointer'>
               {editingTaskIndex !== null ? 'Update Task' : 'Add Task'}
             </Button>
           </DialogFooter>

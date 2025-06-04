@@ -31,6 +31,8 @@ model User {
   competitionHistory CompetitionUser[]
   dietEntries    DietEntry[]
   aiInteractions     AiInteraction[]
+  stripeCustomerId     String?          @map("stripe_customer_id")
+  stripeSubscriptionId String?          @map("stripe_subscription_id")
 
   @@map("users")
 }

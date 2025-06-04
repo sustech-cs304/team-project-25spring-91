@@ -16,6 +16,7 @@ import { toast } from 'sonner'
 import type { Gym } from '@/types/gym'
 import PreviewDialog from './preview-dialog'
 import { X, Upload } from 'lucide-react'
+import api from '@/lib/api'
 
 interface AddSubscriptionFormProps {
   gym: Gym
@@ -76,26 +77,45 @@ const AddSubscriptionForm = ({ gym, onClose }: AddSubscriptionFormProps) => {
     setIsSubmitting(true)
 
     try {
-      const submitData = new FormData()
+      // Convert duration to days based on durationType
+      let durationDays: number
+      const durationValue = parseInt(formData.duration)
       
-      submitData.append('name', formData.name)
-      submitData.append('description', formData.description)
-      submitData.append('price', formData.price)
-      submitData.append('duration', formData.duration)
-      submitData.append('durationType', formData.durationType)
-      submitData.append('features', formData.features)
-      submitData.append('gymId', gym.id.toString())
-
-      if (imageFile) {
-        submitData.append('image', imageFile)
+      switch (formData.durationType) {
+        case 'days':
+          durationDays = durationValue
+          break
+        case 'weeks':
+          durationDays = durationValue * 7
+          break
+        case 'months':
+          durationDays = durationValue * 30
+          break
+        case 'years':
+          durationDays = durationValue * 365
+          break
+        default:
+          durationDays = durationValue * 30 // default to months
       }
 
-      // Replace with actual API call
-      // const response = await api.post('/subscriptions', submitData, {
-      //   headers: {
-      //     'Content-Type': 'multipart/form-data',
-      //   },
-      // })
+      const submitData = {
+        name: formData.name,
+        description: formData.description,
+        price: parseFloat(formData.price),
+        durationDays: durationDays,
+        maxBookingsPerWeek: 10, // You might want to make this configurable
+        isActive: true,
+      }
+
+      const response = await api.post(
+        `/gyms/${gym.id}/membership-plans`,
+        submitData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      )
 
       toast.success('Subscription created successfully!')
       onClose()
@@ -201,47 +221,7 @@ const AddSubscriptionForm = ({ gym, onClose }: AddSubscriptionFormProps) => {
           />
         </div>
 
-        <div className="space-y-2">
-          <Label>Subscription Image</Label>
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
-            {imagePreview ? (
-              <div className="relative">
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  className="w-full h-32 object-cover rounded"
-                />
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size="sm"
-                  className="absolute top-2 right-2"
-                  onClick={removeImage}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-            ) : (
-              <div className="text-center">
-                <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                <div className="mt-2">
-                  <Label htmlFor="image" className="cursor-pointer">
-                    <span className="text-sm text-blue-600 hover:text-blue-500">
-                      Upload an image
-                    </span>
-                    <Input
-                      id="image"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                      className="hidden"
-                    />
-                  </Label>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+
 
         <div className="flex gap-2 pt-4">
           <Button

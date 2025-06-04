@@ -91,10 +91,9 @@ export function WorkoutHeatmap() {
 
       <div className="overflow-x-auto">
         <div className="inline-block min-w-full">
-          {/* Month labels */}
           <div className="flex mb-2">
-            <div className="w-8"></div> {/* Space for day labels */}
-            {months.map((month, index) => (
+            <div className="w-8"></div> 
+            {months.map((month) => (
               <div
                 key={month}
                 className="text-xs text-muted-foreground"
@@ -109,7 +108,6 @@ export function WorkoutHeatmap() {
           </div>
 
           <div className="flex">
-            {/* Day labels */}
             <div className="flex flex-col mr-2">
               {days.map((day, index) => (
                 <div
@@ -121,7 +119,6 @@ export function WorkoutHeatmap() {
               ))}
             </div>
 
-            {/* Heatmap grid */}
             <div className="flex gap-1">
               {weeks.map((week, weekIndex) => (
                 <div key={weekIndex} className="flex flex-col gap-1">
@@ -145,7 +142,6 @@ export function WorkoutHeatmap() {
             </div>
           </div>
 
-          {/* Legend */}
           <div className="flex items-center justify-between mt-4 text-xs text-muted-foreground">
             <span>Less</span>
             <div className="flex gap-1">

@@ -19,7 +19,7 @@ import axios from 'axios';
 import ButterflyLoader from '@/components/butterfly-loader';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { CompletedWorkout, CompletedWorkoutGroup } from '@/types/completed-workout';
+import { CompletedWorkout } from '@/types/completed-workout';
 import { useRoleProtection } from '@/hooks/use-role-protection';
 import { UserRole } from '@/components/auth/sign-up-form';
 
@@ -42,7 +42,7 @@ const CompletedWorkoutsPage = () => {
         fetchCompletedWorkouts();
     }, []);
 
-    const { isAuthorized, isLoading, user } = useRoleProtection({
+    const { isAuthorized, isLoading } = useRoleProtection({
         allowedRoles: [UserRole.REGULAR_USER]
     });
 
@@ -138,13 +138,6 @@ const CompletedWorkoutsPage = () => {
         }
     };
 
-    /**
-     * AI generated code 
-     * tool: Grok 3
-     * version: 3
-     * usage: i just use it make sure i filter it correctly by date, and sorted by so that 'today' is always on the top  
-     */
-
     const groupWorkouts = (workouts: CompletedWorkout[]) => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -176,12 +169,6 @@ const CompletedWorkoutsPage = () => {
         return workouts.slice(start, start + ITEMS_PER_PAGE);
     };
 
-    /**
-     * AI generated code 
-     * tool: chat-gpt 
-     * version: o3 mini high
-     * usage: actually the pagination is from a library called ShadCN, but i want it to render the page properly, like 10 items per page    
-     */
     const renderPagination = (total: number, currentPage: number, section: keyof typeof currentPages) => {
         const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
         if (totalPages <= 1) return null;
@@ -191,7 +178,7 @@ const CompletedWorkoutsPage = () => {
             const maxVisiblePages = 5;
 
             let start = Math.max(1, currentPage - 2);
-            let end = Math.min(totalPages, start + maxVisiblePages - 1);
+            const end = Math.min(totalPages, start + maxVisiblePages - 1);
 
             if (end === totalPages) {
                 start = Math.max(1, end - maxVisiblePages + 1);

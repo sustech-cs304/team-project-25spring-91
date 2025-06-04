@@ -24,6 +24,39 @@ const membershipService = {
     
     return memberships;
   },
+
+  getCurrentMonthRevenueForOwnedGyms: async (ownerId) => {
+      const ownedGyms = await prisma.gym.findMany({
+        where: { ownerId },
+        select: { id: true },
+      });
+
+      if (ownedGyms.length === 0) {
+        return 0;
+      }
+      const ownedGymIds = ownedGyms.map(gym => gym.id);
+
+      const now = new Date();
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999); // Last moment of the month
+
+      const revenueData = await prisma.membershipPayment.aggregate({
+        _sum: {
+          amount: true,
+        },
+        where: {
+          status: 'completed', // Only count completed payments
+          paymentDate: {
+            gte: startOfMonth,
+            lte: endOfMonth,
+          },
+          userMembership: {
+            gymId: { in: ownedGymIds },
+          },
+        },
+      });
+      return revenueData._sum.amount || 0; // Return 0 if sum is null
+    },
   
   getMembershipById: async (userId, membershipId) => {
     const membership = await prisma.userMembership.findFirst({

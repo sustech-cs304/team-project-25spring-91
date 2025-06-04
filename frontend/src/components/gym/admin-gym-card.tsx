@@ -14,7 +14,7 @@ import {
 import type { Gym } from '@/types/gym'
 import { Button } from '@/components/ui/button'
 import UpdateGymDialog from '@/components/gym/update-gym-dialog'
-import MembershipDialog from './membership-dialog'
+import OwnerMembershipDialog from './owner-membership-dialog'
 
 interface GymOwnerCardProps {
   gym: Gym
@@ -83,7 +83,7 @@ const GymOwnerCard: FC<GymOwnerCardProps> = ({ gym }) => {
         onOpenChange={setUpdateOpen}
       />
 
-      <MembershipDialog
+      <OwnerMembershipDialog
         gym={gym}
         open={membershipOpen}
         onOpenChange={setMembershipOpen}

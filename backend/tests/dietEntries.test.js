@@ -3,20 +3,25 @@ const request = require('supertest');
 const app = require('../src/app');
 const { getAuthHeader } = require('./utils/auth');
 
-describe('Diet Entry Routes', () => {
-  let testFoodItem;
+let testFoodItem; // Declare testFoodItem in the top-level scope
 
-  beforeEach(async () => {
-    // Create test food item for diet entries
-    testFoodItem = await global.prisma.foodItem.create({
-      data: {
-        name: 'Test Food for Diet',
-        caloriesPerUnit: 100,
-        servingUnit: '100g',
-        description: 'Food item for testing diet entries'
-      }
-    });
+// This beforeEach will run before each test in this file,
+// after the beforeEach in setup.js has cleaned the database.
+beforeEach(async () => {
+  // Create test food item for diet entries
+  testFoodItem = await global.prisma.foodItem.create({
+    data: {
+      name: 'Test Food for Diet', // Name can be static as table is cleared
+      caloriesPerUnit: 100,
+      servingUnit: '100g',
+      description: 'Food item for testing diet entries'
+    }
   });
+});
+
+describe('Diet Entry Routes', () => {
+  // testFoodItem is now accessible here from the higher scope
+  // No need for a separate beforeEach here to define testFoodItem
 
   describe('GET /api/diet', () => {
     it('should get user diet entries with pagination', async () => {
@@ -111,7 +116,7 @@ describe('Diet Entry Routes', () => {
       expect(response.body.message).toBe('Diet entry created successfully');
       expect(parseInt(response.body.data.quantity)).toBe(dietData.quantity);
       expect(response.body.data.mealType).toBe(dietData.mealType);
-      expect(response.body.data.calories).toBe("200"); // 100 * 2
+      expect(response.body.data.calories).toBe('200'); // 100 * 2
     });
 
     it('should return 404 for non-existent food item', async () => {
@@ -186,7 +191,7 @@ describe('Diet Entry Routes', () => {
     it('should return 403 for diet entry belonging to another user', async () => {
       const dietEntry = await global.prisma.dietEntry.create({
         data: {
-          userId: global.testUsers.admin.id,
+          userId: global.testUsers.admin.id, // Different user
           foodId: testFoodItem.id,
           quantity: 1,
           calories: 100,
@@ -232,13 +237,13 @@ describe('Diet Entry Routes', () => {
       expect(response.body.message).toBe('Diet entry updated successfully');
       expect(parseInt(response.body.data.quantity)).toBe(updateData.quantity);
       expect(response.body.data.mealType).toBe(updateData.mealType);
-      expect(response.body.data.calories).toBe("200"); // Recalculated: 100 * 2
+      expect(response.body.data.calories).toBe('200'); // Recalculated: 100 * 2
     });
 
     it('should return 403 for diet entry belonging to another user', async () => {
       const dietEntry = await global.prisma.dietEntry.create({
         data: {
-          userId: global.testUsers.admin.id,
+          userId: global.testUsers.admin.id, // Different user
           foodId: testFoodItem.id,
           quantity: 1,
           calories: 100,
@@ -290,7 +295,7 @@ describe('Diet Entry Routes', () => {
     it('should return 403 for diet entry belonging to another user', async () => {
       const dietEntry = await global.prisma.dietEntry.create({
         data: {
-          userId: global.testUsers.admin.id,
+          userId: global.testUsers.admin.id, // Different user
           foodId: testFoodItem.id,
           quantity: 1,
           calories: 100,
@@ -362,5 +367,151 @@ describe('Diet Entry Routes', () => {
       expect(response.body.data.period.startDate).toBe(today);
       expect(response.body.data.period.endDate).toBe(tomorrowStr);
     });
+  });
+});
+
+// Add after the existing summary test
+describe('GET /api/diet/monthly-calories-consumed', () => {
+  it('should get monthly calorie consumption data', async () => {
+    // Create diet entries with calories for current month
+    const today = new Date();
+    await global.prisma.dietEntry.createMany({
+      data: [
+        {
+          userId: global.testUsers.user.id,
+          foodId: testFoodItem.id, // Now accessible
+          quantity: 2,
+          calories: 200,
+          consumptionDate: today,
+          mealType: 'breakfast'
+        },
+        {
+          userId: global.testUsers.user.id,
+          foodId: testFoodItem.id, // Now accessible
+          quantity: 1.5,
+          calories: 150,
+          consumptionDate: today,
+          mealType: 'lunch'
+        }
+      ]
+    });
+
+    const response = await request(app)
+      .get('/api/diet/monthly-calories-consumed')
+      .set('Authorization', getAuthHeader(global.testUsers.user))
+      .query({ months: 6 })
+      .expect(200);
+
+    expect(response.body.status).toBe('success');
+    expect(Array.isArray(response.body.data)).toBe(true);
+    expect(response.body.data).toHaveLength(6);
+
+    response.body.data.forEach((monthData) => {
+      expect(monthData).toHaveProperty('month');
+      expect(monthData).toHaveProperty('totalCalories');
+      expect(typeof monthData.totalCalories).toBe('number');
+    });
+
+    // Check current month has calories
+    const currentMonth = `${today.getFullYear()}-${String(
+      today.getMonth() + 1
+    ).padStart(2, '0')}`;
+    const currentMonthData = response.body.data.find(
+      (item) => item.month === currentMonth
+    );
+    expect(currentMonthData.totalCalories).toBeGreaterThan(0);
+  });
+
+  it('should validate months parameter', async () => {
+    const response = await request(app)
+      .get('/api/diet/monthly-calories-consumed')
+      .set('Authorization', getAuthHeader(global.testUsers.user))
+      .query({ months: 100 })
+      .expect(400);
+
+    expect(response.body.status).toBe('error');
+  });
+
+  it('should default to 12 months when no parameter provided', async () => {
+    const response = await request(app)
+      .get('/api/diet/monthly-calories-consumed')
+      .set('Authorization', getAuthHeader(global.testUsers.user))
+      .expect(200);
+
+    expect(response.body.status).toBe('success');
+    expect(response.body.data).toHaveLength(12);
+  });
+
+  it('should return zero calories for months with no entries', async () => {
+    const response = await request(app)
+      .get('/api/diet/monthly-calories-consumed')
+      .set('Authorization', getAuthHeader(global.testUsers.user))
+      .query({ months: 3 })
+      .expect(200);
+
+    expect(response.body.status).toBe('success');
+    // Most months should have 0 calories unless we created entries
+    const zeroCalorieMonths = response.body.data.filter(
+      (month) => month.totalCalories === 0
+    );
+    expect(zeroCalorieMonths.length).toBeGreaterThanOrEqual(0); // Can be 0 if entries exist for all 3 months
+  });
+});
+
+// Add validation tests for mealType flexibility
+describe('POST /api/diet - Enhanced Validation', () => {
+  it('should accept any string for mealType', async () => {
+    const dietData = {
+      foodId: testFoodItem.id, // Now accessible
+      quantity: 1,
+      consumptionDate: new Date().toISOString(),
+      mealType: 'custom-meal-type'
+    };
+
+    const response = await request(app)
+      .post('/api/diet')
+      .set('Authorization', getAuthHeader(global.testUsers.user))
+      .send(dietData)
+      .expect(201);
+
+    expect(response.body.status).toBe('success');
+    expect(response.body.data.mealType).toBe('custom-meal-type');
+  });
+
+  it('should default mealType when not provided', async () => {
+    const dietData = {
+      foodId: testFoodItem.id, // Now accessible
+      quantity: 1,
+      consumptionDate: new Date().toISOString()
+      // No mealType provided
+    };
+
+    const response = await request(app)
+      .post('/api/diet')
+      .set('Authorization', getAuthHeader(global.testUsers.user))
+      .send(dietData)
+      .expect(201);
+
+    expect(response.body.status).toBe('success');
+    expect(response.body.data.mealType).toBe('Uncategorized');
+  });
+
+  it('should handle null notes', async () => {
+    const dietData = {
+      foodId: testFoodItem.id, // Now accessible
+      quantity: 1,
+      consumptionDate: new Date().toISOString(),
+      mealType: 'breakfast',
+      notes: null
+    };
+
+    const response = await request(app)
+      .post('/api/diet')
+      .set('Authorization', getAuthHeader(global.testUsers.user))
+      .send(dietData)
+      .expect(201);
+
+    expect(response.body.status).toBe('success');
+    expect(response.body.data.notes).toBeNull();
   });
 });

@@ -1,9 +1,8 @@
 "use client";
 import { SheetDemo } from '@/components/training-tasks/add-goal-sheet';
-import { SidebarGroup, SidebarGroupLabel } from '@/components/ui/sidebar';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { Calendar, CheckCircle, Clock, Dumbbell, Edit, Loader2, LogOut, MoreVertical, Settings, Trash2, User } from 'lucide-react';
+import { Calendar, CheckCircle, Clock, Dumbbell, Edit, MoreVertical, Trash2 } from 'lucide-react';
 import { EditWorkoutDialog } from '@/components/training-tasks/edit-workouts-dialog';
 import {
     Pagination,
@@ -18,7 +17,6 @@ import api from '@/lib/api';
 import ButterflyLoader from '@/components/butterfly-loader';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -26,9 +24,8 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import router from 'next/router';
 
-import { PlannedWorkout, WorkoutGroup, Goal } from '@/types/workout';
+import { PlannedWorkout, WorkoutGroup } from '@/types/workout';
 import { useRoleProtection } from '@/hooks/use-role-protection';
 import { UserRole } from '@/components/auth/sign-up-form';
 
@@ -46,19 +43,16 @@ const SetGoalPage = () => {
         lastWeek: 1,
         past: 1
     });
-    const [isExpanded, setIsExpanded] = useState(false);
     useEffect(() => {
         fetchWorkouts();
     }, []);
 
-    const { isAuthorized, isLoading, user } = useRoleProtection({
+    const { isAuthorized, isLoading } = useRoleProtection({
         allowedRoles: [UserRole.REGULAR_USER]
     });
 
 
-    // At the component level where you manage state
 
-    // Function to toggle expansion for a specific workout
     const toggleExpansion = (workoutId: number) => {
         setExpandedWorkouts((prev) => {
             const newSet = new Set(prev);
@@ -92,7 +86,7 @@ const SetGoalPage = () => {
         }
     };
 
-    const handleAddGoal = async (newGoal: Goal) => {
+    const handleAddGoal = async () => {
         await fetchWorkouts();
     };
 
@@ -131,7 +125,6 @@ const SetGoalPage = () => {
             await fetchWorkouts();
             toast.success('Workout updated successfully');
         } catch (error) {
-            // console.error('Error marking workout:', error); 
 
             let errorMessage = 'Failed to update workout';
 
@@ -157,8 +150,6 @@ const SetGoalPage = () => {
                 toast.error("Cannot mark future plan as completed", {
                     description: 'Please choose the correct plan date',
                 })
-                // console.log(workout.scheduledDate.split('T')[0]);
-                // console.log(today.toISOString().split('T')[0]);
                 return;
             }
 
@@ -172,7 +163,6 @@ const SetGoalPage = () => {
             await fetchWorkouts();
             toast.success('Workout marked as completed');
         } catch (error) {
-            // console.error('Error marking workout:', error); 
 
             let errorMessage = 'Failed to mark workout as completed';
 
@@ -221,12 +211,7 @@ const SetGoalPage = () => {
     };
 
 
-    /**
-     * AI generated code 
-     * tool: chat-gpt 
-     * version: o3 mini high
-     * usage: actually the pagination is from a library called ShadCN, but i want it to render the page properly, like 10 items per page    
-     */
+
     const paginateWorkouts = (workouts: PlannedWorkout[], page: number) => {
         const start = (page - 1) * ITEMS_PER_PAGE;
         return workouts.slice(start, start + ITEMS_PER_PAGE);
@@ -238,17 +223,15 @@ const SetGoalPage = () => {
 
         const renderPageNumbers = () => {
             const pages = [];
-            const maxVisiblePages = 5; // Show max 5 page numbers at a time
+            const maxVisiblePages = 5; 
 
             let start = Math.max(1, currentPage - 2);
-            let end = Math.min(totalPages, start + maxVisiblePages - 1);
+            const end = Math.min(totalPages, start + maxVisiblePages - 1);
 
-            // Adjust start if we're near the end
             if (end === totalPages) {
                 start = Math.max(1, end - maxVisiblePages + 1);
             }
 
-            // Add first page
             if (start > 1) {
                 pages.push(
                     <PaginationItem key="1">
@@ -269,7 +252,6 @@ const SetGoalPage = () => {
                 }
             }
 
-            // Add visible page numbers
             for (let i = start; i <= end; i++) {
                 pages.push(
                     <PaginationItem key={i}>
@@ -284,7 +266,6 @@ const SetGoalPage = () => {
                 );
             }
 
-            // Add last page
             if (end < totalPages) {
                 if (end < totalPages - 1) {
                     pages.push(
@@ -339,7 +320,6 @@ const SetGoalPage = () => {
 
     const renderWorkoutList = (workouts: PlannedWorkout[]) => {
         return workouts.map(workout => {
-            const exercisesToShow = isExpanded ? workout.plannedExercises : workout.plannedExercises.slice(0, 1);
 
             return (
                 <li
@@ -347,7 +327,6 @@ const SetGoalPage = () => {
                     className="bg-card text-card-foreground p-3 rounded-lg border border-border/60 hover:border-border/80 transition-colors"
                 >
                     <div className="flex flex-col gap-1.5">
-                        {/* Header Section */}
                         <div className="flex justify-between items-start">
                             <div className="flex items-center gap-2">
                                 <h3 className="font-medium text-base">{workout.title}</h3>
@@ -389,7 +368,6 @@ const SetGoalPage = () => {
                             </DropdownMenu>
                         </div>
 
-                        {/* Metadata Section */}
                         <div className="flex items-center gap-3 text-muted-foreground text-xs">
                             <div className="flex items-center">
                                 <Calendar className="w-3 h-3 mr-1" />
@@ -401,7 +379,6 @@ const SetGoalPage = () => {
                             </div>
                         </div>
 
-                        {/* Exercises Section */}
                         <div className="grid gap-0.5">
                             {(expandedWorkouts.has(workout.id)
                                 ? workout.plannedExercises
@@ -479,7 +456,6 @@ const SetGoalPage = () => {
 
     return (
         <div className="container mx-auto px-6">
-            {/* Dialog and Header sections remain the same */}
             <EditWorkoutDialog
                 workouts={workouts}
                 workout={selectedWorkout}
@@ -495,8 +471,7 @@ const SetGoalPage = () => {
                 </div>
             </div>
 
-            {/* Main Content */}
-            <div className="space-y-8"> {/* Increased space between sections */}
+            <div className="space-y-8"> 
                 {workouts.length === 0 ? (
                     <div className="text-center py-8">
                         <p className="text-lg text-muted-foreground mb-2">
@@ -508,7 +483,6 @@ const SetGoalPage = () => {
                     </div>
                 ) : (
                     <>
-                        {/* Today's Workouts */}
                         {groupedWorkouts.today.length > 0 && (
                             <div>
                                 <h2 className="text-xl font-semibold mb-3">Today</h2>
@@ -522,7 +496,6 @@ const SetGoalPage = () => {
                             </div>
                         )}
 
-                        {/* Upcoming Workouts */}
                         {groupedWorkouts.future.length > 0 && (
                             <div>
                                 <h2 className="text-xl font-semibold mb-3">Upcoming Workouts</h2>
@@ -543,7 +516,6 @@ const SetGoalPage = () => {
                             </div>
                         )}
 
-                        {/* Last 7 Days */}
                         {groupedWorkouts.lastWeek.length > 0 && (
                             <div>
                                 <h2 className="text-xl font-semibold mb-3">Last 7 Days</h2>
@@ -564,7 +536,6 @@ const SetGoalPage = () => {
                             </div>
                         )}
 
-                        {/* Past Workouts */}
                         {groupedWorkouts.past.length > 0 && (
                             <div>
                                 <h2 className="text-xl font-semibold mb-3">Past Workouts</h2>

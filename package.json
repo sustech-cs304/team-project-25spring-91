@@ -1,9 +1,10 @@
 {
-  "dependencies": {
-    "@google/generative-ai": "^0.24.0",
-    "@radix-ui/react-scroll-area": "^1.2.4",
-    "@radix-ui/react-switch": "^1.2.2",
-    "cohere-ai": "^7.17.1",
-    "lucide-react": "^0.487.0"
+  "name": "fullstack-project",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build:backend": "cd backend && npm ci && npx prisma generate && npm run test:ci",
+    "build:frontend": "cd frontend && npm ci && npm run build",
+    "build": "npm run build:backend && npm run build:frontend"
   }
 }

@@ -278,3 +278,175 @@ describe('Gym Routes', () => {
     });
   });
 });
+
+// Add after the existing DELETE test
+describe('GET /api/gyms - Enhanced Pagination', () => {
+  it('should get all gyms without pagination when paginate=false', async () => {
+    const response = await request(app)
+      .get('/api/gyms?paginate=false')
+      .expect(200);
+
+    expect(response.body.status).toBe('success');
+    expect(response.body.data).toBeInstanceOf(Array);
+    expect(response.body.pagination).toBeUndefined();
+    expect(response.body.results).toBe(response.body.data.length);
+  });
+
+  it('should get gyms with default pagination', async () => {
+    const response = await request(app)
+      .get('/api/gyms')
+      .expect(200);
+
+    expect(response.body.status).toBe('success');
+    expect(response.body.pagination).toBeDefined();
+    expect(response.body.pagination.page).toBe(1);
+    expect(response.body.pagination.limit).toBe(10);
+  });
+});
+
+describe('GET /api/gyms/all/user-view', () => {
+  it('should get all gyms for admin view', async () => {
+    const response = await request(app)
+      .get('/api/gyms/all/user-view')
+      .set('Authorization', getAuthHeader(global.testUsers.admin))
+      .expect(200);
+
+    expect(response.body.status).toBe('success');
+    expect(Array.isArray(response.body.data)).toBe(true);
+  });
+
+  it('should allow gym owner access', async () => {
+    const response = await request(app)
+      .get('/api/gyms/all/user-view')
+      .set('Authorization', getAuthHeader(global.testUsers.gymOwner))
+      .expect(200);
+
+    expect(response.body.status).toBe('success');
+  });
+
+  it('should allow regular user access', async () => {
+    const response = await request(app)
+      .get('/api/gyms/all/user-view')
+      .set('Authorization', getAuthHeader(global.testUsers.user))
+      .expect(200);
+
+    expect(response.body.status).toBe('success');
+  });
+});
+
+describe('GET /api/gyms/owned/my-gyms', () => {
+  it('should get gym owner\'s gyms', async () => {
+    // Create gym owned by gym owner
+    await global.prisma.gym.create({
+      data: {
+        name: 'My Owned Gym',
+        address: '123 Owner St',
+        ownerId: global.testUsers.gymOwner.id
+      }
+    });
+
+    const response = await request(app)
+      .get('/api/gyms/owned/my-gyms')
+      .set('Authorization', getAuthHeader(global.testUsers.gymOwner))
+      .query({ page: 1, limit: 10 })
+      .expect(200);
+
+    expect(response.body.status).toBe('success');
+    expect(response.body.data).toBeInstanceOf(Array);
+    expect(response.body.pagination).toBeDefined();
+    expect(response.body.pagination.page).toBe(1);
+    expect(response.body.pagination.limit).toBe(10);
+  });
+
+  it('should search in owned gyms', async () => {
+    const response = await request(app)
+      .get('/api/gyms/owned/my-gyms?search=owned')
+      .set('Authorization', getAuthHeader(global.testUsers.gymOwner))
+      .expect(200);
+
+    expect(response.body.status).toBe('success');
+  });
+
+  it('should return 403 for regular user', async () => {
+    const response = await request(app)
+      .get('/api/gyms/owned/my-gyms')
+      .set('Authorization', getAuthHeader(global.testUsers.user))
+      .expect(403);
+
+    expect(response.body.status).toBe('error');
+  });
+});
+
+describe('GET /api/gyms/:id/classes', () => {
+  it('should get gym classes', async () => {
+    const gym = await global.prisma.gym.create({
+      data: {
+        name: 'Gym with Classes',
+        address: '456 Class St',
+        ownerId: global.testUsers.gymOwner.id
+      }
+    });
+
+    // Create a class for this gym
+    await global.prisma.gymClass.create({
+      data: {
+        name: 'Test Yoga Class',
+        description: 'Relaxing yoga session',
+        gymId: gym.id,
+        maxCapacity: 20,
+        durationMinutes: 60,
+        isActive: true
+      }
+    });
+
+    const response = await request(app)
+      .get(`/api/gyms/${gym.id}/classes`)
+      .set('Authorization', getAuthHeader(global.testUsers.user))
+      .expect(200);
+
+    expect(response.body.status).toBe('success');
+    expect(Array.isArray(response.body.data)).toBe(true);
+    expect(response.body.results).toBe(response.body.data.length);
+  });
+
+  it('should return 404 for non-existent gym', async () => {
+    const response = await request(app)
+      .get('/api/gyms/999999/classes')
+      .set('Authorization', getAuthHeader(global.testUsers.user))
+      .expect(404);
+
+    expect(response.body.status).toBe('error');
+  });
+});
+
+describe('GET /api/gyms/:id/membership-plans', () => {
+  it('should get gym membership plans', async () => {
+    const gym = await global.prisma.gym.create({
+      data: {
+        name: 'Gym with Plans',
+        address: '789 Plan St',
+        ownerId: global.testUsers.gymOwner.id
+      }
+    });
+
+    // Create a membership plan for this gym
+    await global.prisma.membershipPlan.create({
+      data: {
+        name: 'Basic Plan',
+        price: 29.99,
+        durationDays: 30,
+        gymId: gym.id,
+        isActive: true
+      }
+    });
+
+    const response = await request(app)
+      .get(`/api/gyms/${gym.id}/membership-plans`)
+      .set('Authorization', getAuthHeader(global.testUsers.user))
+      .expect(200);
+
+    expect(response.body.status).toBe('success');
+    expect(Array.isArray(response.body.data)).toBe(true);
+    expect(response.body.results).toBe(response.body.data.length);
+  });
+});

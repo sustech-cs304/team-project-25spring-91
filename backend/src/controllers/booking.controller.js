@@ -24,28 +24,36 @@ const bookingController = {
     });
   },
   
-  getBookingHistory: async (req, res) => {
-    const userId = req.user.id;
-    const { page = 1, limit = 10 } = req.query;
-    
-    const history = await bookingService.getBookingHistory(
-      userId,
-      parseInt(page),
-      parseInt(limit)
-    );
-    
-    res.status(200).json({
-      status: 'success',
-      results: history.bookings.length,
-      pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        totalPages: history.totalPages,
-        totalItems: history.totalItems
-      },
-      data: history.bookings
-    });
-  },
+ getBookingHistory: async (req, res) => {
+      const userId = req.user.id;
+      const { page, limit, paginate } = req.query;
+
+      const history = await bookingService.getBookingHistory(userId, {
+        page: page ? parseInt(page) : 1,
+        limit: limit ? parseInt(limit) : 10,
+        paginate: paginate !== 'false',
+      });
+
+      if (!history.paginationApplied) {
+        res.status(200).json({
+          status: 'success',
+          results: history.totalItems,
+          data: history.bookings,
+        });
+      } else {
+        res.status(200).json({
+          status: 'success',
+          results: history.bookings.length,
+          pagination: {
+            page: page ? parseInt(page) : 1,
+            limit: limit ? parseInt(limit) : 10,
+            totalPages: history.totalPages,
+            totalItems: history.totalItems,
+          },
+          data: history.bookings,
+        });
+      }
+    },
   
   getBookingById: async (req, res) => {
     const userId = req.user.id;

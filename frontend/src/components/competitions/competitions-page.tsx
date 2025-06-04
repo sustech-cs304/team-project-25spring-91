@@ -34,13 +34,11 @@ export const CompetitionsPage: React.FC = () => {
     try {
       const now = new Date();
 
-      // Fetch available competitions (not joined yet)
       const availableResponse = await api.get(
         "/competitions/user/discover-subscribed-gym-competitions"
       );
       const availableData = availableResponse.data.data || [];
 
-      // Fetch joined competitions
       const joinedResponse = await api.get(
         "/competitions/user/joined-subscribed-gym-competitions"
       );
@@ -50,7 +48,6 @@ export const CompetitionsPage: React.FC = () => {
       console.log("Joined competitions:", joinedData);
       console.log("Current date:", now);
 
-      // Filter available competitions (not joined, active, not ended)
       const available = availableData.filter((comp: Competition) => {
         const endDate = new Date(comp.endDate);
         const isAvailable = Boolean(
@@ -69,7 +66,6 @@ export const CompetitionsPage: React.FC = () => {
         return isAvailable;
       });
 
-      // Filter joined competitions into ongoing and completed
       const ongoing = joinedData.filter((userComp: UserCompetition) => {
         const endDate = new Date(userComp.competition.endDate);
         const isOngoing = Boolean(endDate >= now && userComp.isActive);
@@ -119,7 +115,6 @@ export const CompetitionsPage: React.FC = () => {
 
   const handleJoinCompetition = async (competitionId: number) => {
     try {
-      // Find the competition to validate before joining
       const competition = availableCompetitions.find(
         (comp) => comp.id === competitionId
       );
@@ -133,7 +128,6 @@ export const CompetitionsPage: React.FC = () => {
       const startDate = new Date(competition.startDate);
       const endDate = new Date(competition.endDate);
 
-      // Validate competition eligibility
       if (!competition.isActive) {
         toast.error("This competition is not active");
         return;
@@ -159,7 +153,7 @@ export const CompetitionsPage: React.FC = () => {
 
       await api.post(`/competitions/${competitionId}/join`);
       toast.success("Successfully joined competition!");
-      fetchCompetitions(); // Refresh the data
+      fetchCompetitions(); 
       setDetailsOpen(false);
     } catch (error: any) {
       toast.error(
@@ -177,7 +171,6 @@ export const CompetitionsPage: React.FC = () => {
     setDetailsOpen(true);
   };
 
-  // Helper function to get competition ID safely
   const getCompetitionId = (
     competition: Competition | UserCompetition
   ): number => {
@@ -186,7 +179,6 @@ export const CompetitionsPage: React.FC = () => {
       : competition.id;
   };
 
-  // Helper function to check if user can join competition
   const canJoinCompetition = (competition: Competition): boolean => {
     const now = new Date();
     const startDate = new Date(competition.startDate);
@@ -238,7 +230,7 @@ export const CompetitionsPage: React.FC = () => {
           {ongoingCompetitions.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-muted-foreground">
-                You're not participating in any ongoing competitions.
+                You are not participating in any ongoing competitions.
               </p>
               <p className="text-sm text-muted-foreground mt-1">
                 Check the Available tab to join new competitions!
@@ -296,7 +288,7 @@ export const CompetitionsPage: React.FC = () => {
           {completedCompetitions.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-muted-foreground">
-                You haven't completed any competitions yet.
+                You have not completed any competitions yet.
               </p>
               <p className="text-sm text-muted-foreground mt-1">
                 Join some competitions to start building your history!

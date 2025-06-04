@@ -6,7 +6,7 @@ import { useRoleProtection } from '@/hooks/use-role-protection'
 import { UserRole } from '@/components/auth/sign-up-form';
 
 export default function CompetitionsPageRoute() {
-    const { isAuthorized, isLoading, user } = useRoleProtection({
+    const { isAuthorized, isLoading } = useRoleProtection({
       allowedRoles: [UserRole.REGULAR_USER]
     });
     

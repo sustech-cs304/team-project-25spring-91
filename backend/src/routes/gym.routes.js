@@ -19,7 +19,11 @@ const {
 const router = express.Router();
 
 // --- Public routes ---
-router.get('/', asyncHandler(gymController.getAllGyms));
+router.get(
+    '/',
+    validate(gymSchemas.listAllGymsQuery), // Apply validation
+    asyncHandler(gymController.getAllGyms)
+  );
 
 router.get(
   '/:id',

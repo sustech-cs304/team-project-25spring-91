@@ -6,29 +6,38 @@ const fs = require('fs').promises;
 const path = require('path');
 
 const classController = {
-  getAllGymClasses: async (req, res) => {
-    const { gymId, difficultyLevel, search, page = 1, limit = 10 } = req.query;
-    
-    const classesData = await classService.getAllGymClasses({
-      gymId: gymId ? parseInt(gymId) : undefined,
-      difficultyLevel,
-      search,
-      page: parseInt(page),
-      limit: parseInt(limit)
-    });
-    
-    res.status(200).json({
-      status: 'success',
-      results: classesData.classes.length,
-      pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        totalPages: classesData.totalPages,
-        totalItems: classesData.totalItems
-      },
-      data: classesData.classes
-    });
-  },
+getAllGymClasses: async (req, res) => {
+      const { gymId, difficultyLevel, search, page, limit, paginate } = req.query;
+
+      const classesData = await classService.getAllGymClasses({
+        gymId: gymId ? parseInt(gymId) : undefined,
+        difficultyLevel,
+        search,
+        page: page ? parseInt(page) : 1,
+        limit: limit ? parseInt(limit) : 10,
+        paginate: paginate !== 'false',
+      });
+
+      if (!classesData.paginationApplied) {
+        res.status(200).json({
+          status: 'success',
+          results: classesData.totalItems,
+          data: classesData.classes,
+        });
+      } else {
+        res.status(200).json({
+          status: 'success',
+          results: classesData.classes.length,
+          pagination: {
+            page: page ? parseInt(page) : 1,
+            limit: limit ? parseInt(limit) : 10,
+            totalPages: classesData.totalPages,
+            totalItems: classesData.totalItems,
+          },
+          data: classesData.classes,
+        });
+      }
+    },
   
   getGymClassById: async (req, res) => {
     const classId = parseInt(req.params.id);
@@ -40,14 +49,14 @@ const classController = {
     });
   },
   
-  getClassSchedules: async (req, res) => {
+getClassSchedules: async (req, res) => {
     const classId = parseInt(req.params.id);
-    const { startDate, endDate } = req.query;
+    const { startDate, endDate } = req.query; // Will be string or undefined
     
     const schedules = await classService.getClassSchedules(
       classId,
-      startDate ? new Date(startDate) : undefined,
-      endDate ? new Date(endDate) : undefined
+      startDate, // Pass directly
+      endDate   // Pass directly
     );
     
     res.status(200).json({

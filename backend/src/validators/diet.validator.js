@@ -211,6 +211,18 @@ const dietSchemas = {
     body: z.object({}).optional(),
     params: z.object({}).optional(),
   }),
+  getMonthlyCaloriesConsumedQuery: z.object({
+    query: z.object({
+      months: z
+        .string()
+        .optional()
+        .transform((val) => (val ? parseInt(val) : 12)) // Default to last 12 months
+        .refine((val) => val > 0 && val <= 60, { // Limit to a reasonable range, e.g., 5 years
+          message: 'Months must be between 1 and 60',
+        }),
+    }),
+  }),
 };
+
 
 module.exports = { dietSchemas };

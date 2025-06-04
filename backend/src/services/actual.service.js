@@ -619,7 +619,96 @@ const actualService = {
     await prisma.actualWorkout.delete({
       where: { id: workoutId }
     });
-  }
+  },
+
+  getMonthlyCalorieBurn: async (userId, numberOfMonths = 12) => {
+    const today = new Date();
+    const startDate = new Date(
+      today.getFullYear(),
+      today.getMonth() - (numberOfMonths - 1), // Go back (numberOfMonths - 1) full months
+      1, // Start from the 1st day of that month
+    );
+    startDate.setHours(0, 0, 0, 0);
+
+    // Fetch actual workouts within the date range that have exercises with calories
+    const workouts = await prisma.actualWorkout.findMany({
+      where: {
+        userId,
+        completedDate: {
+          gte: startDate,
+          lte: today, // Up to today
+        },
+        actualExercises: {
+          some: {
+            actualCalories: {
+              gt: 0, // Only consider exercises where calories were logged
+            },
+          },
+        },
+      },
+      select: {
+        completedDate: true,
+        actualExercises: {
+          select: {
+            actualCalories: true,
+          },
+          where: {
+            actualCalories: {
+              gt: 0,
+            },
+          },
+        },
+      },
+      orderBy: {
+        completedDate: 'asc',
+      },
+    });
+
+    const monthlyCalories = {};
+
+    // Initialize months in the range with 0 calories
+    for (let i = 0; i < numberOfMonths; i++) {
+      const monthDate = new Date(today.getFullYear(), today.getMonth() - i, 1);
+      const monthKey = `${monthDate.getFullYear()}-${String(
+        monthDate.getMonth() + 1,
+      ).padStart(2, '0')}`;
+      monthlyCalories[monthKey] = 0;
+    }
+
+    // Aggregate calories per month
+    workouts.forEach((workout) => {
+      const year = workout.completedDate.getFullYear();
+      const month = String(workout.completedDate.getMonth() + 1).padStart(2, '0');
+      const monthKey = `${year}-${month}`;
+
+      let workoutCalories = 0;
+      workout.actualExercises.forEach((exercise) => {
+        if (exercise.actualCalories) {
+          workoutCalories += exercise.actualCalories;
+        }
+      });
+
+      if (monthlyCalories[monthKey] !== undefined) {
+        monthlyCalories[monthKey] += workoutCalories;
+      } else {
+        // This case should ideally not happen if initialization is correct
+        // and date range for fetching is aligned with initialization.
+        // However, as a fallback:
+        monthlyCalories[monthKey] = workoutCalories;
+      }
+    });
+
+    // Convert to sorted array format
+    const result = Object.entries(monthlyCalories)
+      .map(([month, totalCalories]) => ({
+        month,
+        totalCalories,
+      }))
+      .sort((a, b) => (a.month < b.month ? -1 : 1)); // Sort chronologically
+
+    return result;
+  },
+
 };
 
 module.exports = { actualService };

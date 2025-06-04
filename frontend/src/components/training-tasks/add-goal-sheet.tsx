@@ -20,7 +20,6 @@ import axios from "axios"
 
 import { SheetDemoProps } from '@/types/props';
 import { Exercise, ExerciseOption } from '@/types/exercise';
-import { Goal } from '@/types/workout';
 
 
 
@@ -33,8 +32,6 @@ export function SheetDemo({ workouts, propAddGoal }: SheetDemoProps) {
     const [exercises, setExercises] = React.useState<Exercise[]>([]);
     const [exerciseOptions, setExerciseOptions] = React.useState<ExerciseOption[]>([]);
 
-    const maxCalories = 3000;
-    const minCalories = 0;
 
     useEffect(() => {
         if (open) {

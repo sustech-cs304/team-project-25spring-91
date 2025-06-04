@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { notFound, useParams, useRouter } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import api from '@/lib/api';
 import { toast } from 'sonner';
 import type { Gym, GymClass } from '@/types/gym';
@@ -23,17 +23,15 @@ export default function GymPage() {
     const fetchGymData = async () => {
       try {
         setLoading(true);
-        // Fetch gym details
         const gymResponse = await api.get<{ data: Gym }>(`/gyms/${gymId}`);
         setGym(gymResponse.data.data);
 
-        // Fetch gym classes
         const classesResponse = await api.get<{ data: GymClass[] }>(`/gyms/${gymId}/classes`);
         setClasses(classesResponse.data.data);
 
       } catch (error) {
         console.error("Error details:", error);
-        let errorMessage = "Failed to load gym details";
+        const errorMessage = "Failed to load gym details";
         toast.error(errorMessage);
       } finally {
         setLoading(false);
@@ -45,7 +43,7 @@ export default function GymPage() {
     }
   }, [gymId]);
 
-  const { isAuthorized, isLoading, user } = useRoleProtection({
+  const { isAuthorized, isLoading } = useRoleProtection({
     allowedRoles: [UserRole.REGULAR_USER, UserRole.ADMIN, UserRole.GYM_OWNER]
   });
 

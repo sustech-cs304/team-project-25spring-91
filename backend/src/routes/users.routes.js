@@ -63,4 +63,10 @@ router.get(
   asyncHandler(userController.getNewUserSignups),
 );
 
+router.get(
+  '/gym-owner/dashboard-stats', // New route for gym owner
+  roleCheck(['gym_owner']), // Only gym_owner can access
+  asyncHandler(userController.getGymOwnerDashboardStats),
+);
+
 module.exports = router;

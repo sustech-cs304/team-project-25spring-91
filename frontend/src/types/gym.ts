@@ -1,7 +1,5 @@
-// Basic ID type
 export type ID = string | number;
 
-// Pagination interface
 export interface Pagination {
   page: number;
   limit: number;
@@ -18,6 +16,10 @@ export type Gym = {
   imageUrl: string | null;
   ownerId: number;
   createdAt: string;
+  _count: {
+    classes: number; 
+    membershipPlans: number; 
+  }
 };
 
 export interface GymClass { // this is called from getclass by gym
@@ -87,8 +89,9 @@ export interface MembershipPlan {
   description: string;
   durationDays: number;
   price: string; 
-  maxBookingsPerWeek: number | null;
+  maxBookingsPerWeek: number ;
   isActive: boolean;
+  checkoutUrl: string;
   createdAt: string;
 }
 

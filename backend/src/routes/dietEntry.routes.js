@@ -31,6 +31,12 @@ router.get(
 );
 
 router.get(
+  '/monthly-calories-consumed',
+  validate(dietSchemas.getMonthlyCaloriesConsumedQuery), // Validate query params
+  asyncHandler(dietEntryController.getMonthlyCalorieConsumption),
+);
+
+router.get(
   '/:id',
   validate(dietSchemas.getDietEntry),
   asyncHandler(dietEntryController.getDietEntryById),

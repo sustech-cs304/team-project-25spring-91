@@ -5,170 +5,172 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select'
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog'
+import {
     Edit,
     Trash2,
     Calendar,
     Users,
     Trophy,
     Target,
-    Award
+    Plus,
+    Building2
 } from 'lucide-react'
 import Image from 'next/image'
 import { toast } from 'sonner'
 import api from '@/lib/api'
+import { Gym } from '@/types/gym'
+import { TasksDialog } from '@/components/gym/tasks-dialog'
+import AddCompetitionForm from '@/components/gym/add-competition-form'
+import EditCompetitionForm from '@/components/gym/edit-competition-form'
 
 interface Competition {
     id: number
+    gymId: number
     name: string
     description: string
     startDate: string
     endDate: string
+    imageUrl?: string
     maxParticipants: number
-    imageUrl?: string
-    gymId: number
-    tasks?: Task[]
-}
-
-interface Task {
-    id: number
-    name: string
-    description: string
-    exerciseName: string
-    exerciseCategory: string
-    metric: string
-    targetValue: number
-    unit: string
-    pointsValue: number
-}
-
-interface Gym {
-    id: number
-    name: string
-    address: string
-    description: string
-    imageUrl?: string
-    ownerId: number
+    isActive: boolean
+    createdAt: string
+    gym?: {
+        id: number
+        name: string
+    }
 }
 
 const CompetitionsPage = () => {
     const [competitions, setCompetitions] = useState<Competition[]>([])
-    const [gym, setGym] = useState<Gym | null>(null)
+    const [gyms, setGyms] = useState<Gym[]>([])
+    const [selectedGymId, setSelectedGymId] = useState<number | null>(null)
     const [loading, setLoading] = useState(true)
+    const [showAddDialog, setShowAddDialog] = useState(false)
+    const [showEditDialog, setShowEditDialog] = useState(false)
+    const [editingCompetition, setEditingCompetition] = useState<Competition | null>(null)
 
     useEffect(() => {
-        fetchGymAndCompetitions()
+        fetchGyms()
     }, [])
 
-    const fetchGymAndCompetitions = async () => {
+    useEffect(() => {
+        if (selectedGymId) {
+            fetchCompetitions(selectedGymId)
+        }
+    }, [selectedGymId])
+
+    const fetchGyms = async () => {
         try {
             setLoading(true)
+            const response = await api.get('/gyms/owned/my-gyms')
+            console.log('Gyms response:', response.data)
 
-            // Get user's gym using your existing endpoint
-            const gymResponse = await api.get('/gyms/owned/my-gyms')
-            console.log('Gym response:', gymResponse.data) // Debug log
+            let gymsData: Gym[] = []
 
-            let currentGym = null
-
-            // Handle different possible response structures
-            if (gymResponse.data) {
-                // If it's an array
-                if (Array.isArray(gymResponse.data) && gymResponse.data.length > 0) {
-                    currentGym = gymResponse.data[0]
-                }
-                // If it's wrapped in a data property
-                else if (gymResponse.data.data && Array.isArray(gymResponse.data.data) && gymResponse.data.data.length > 0) {
-                    currentGym = gymResponse.data.data[0]
-                }
-                // If it's a single gym object
-                else if (gymResponse.data.id) {
-                    currentGym = gymResponse.data
-                }
-                // If it's wrapped and is a single object
-                else if (gymResponse.data.data && gymResponse.data.data.id) {
-                    currentGym = gymResponse.data.data
+            if (response.data) {
+                if (Array.isArray(response.data)) {
+                    gymsData = response.data
+                } else if (response.data.data && Array.isArray(response.data.data)) {
+                    gymsData = response.data.data
+                } else if (response.data.id) {
+                    gymsData = [response.data]
+                } else if (response.data.data && response.data.data.id) {
+                    gymsData = [response.data.data]
                 }
             }
 
-            console.log('Current gym:', currentGym) // Debug log
-
-            if (currentGym) {
-                setGym(currentGym)
-
-                // TODO: Replace with your actual competitions endpoint
-                // const competitionsResponse = await api.get(`/gyms/${currentGym.id}/competitions`)
-                // setCompetitions(competitionsResponse.data)
-
-                // Mock data for now
-                setCompetitions([
-                    {
-                        id: 1,
-                        name: 'Winter Strength Challenge',
-                        description: 'Build strength during the winter months.',
-                        startDate: '2025-12-01T00:00:00Z',
-                        endDate: '2025-12-31T23:59:59Z',
-                        maxParticipants: 50,
-                        // imageUrl: '/uploads/competitions/winter-challenge.jpg',
-                        gymId: currentGym.id,
-                        tasks: [
-                            {
-                                id: 1,
-                                name: 'Deadlift Challenge',
-                                description: 'Lift a total of 5000kg in deadlifts',
-                                exerciseName: 'Deadlift',
-                                exerciseCategory: 'strength',
-                                metric: 'Weight',
-                                targetValue: 5000,
-                                unit: 'kg',
-                                pointsValue: 200
-                            }
-                        ]
-                    }
-                ])
-            } else {
-                console.error('No gym found in response:', gymResponse.data)
-                toast.error('No gym found for this owner')
+            setGyms(gymsData)
+            
+            // Auto-select first gym if only one exists
+            if (gymsData.length === 1) {
+                setSelectedGymId(gymsData[0].id)
+            } else if (gymsData.length > 1) {
+                // Let user choose which gym
+                setSelectedGymId(null)
             }
 
         } catch (error) {
-            console.error('Error fetching data:', error)
-            toast.error('Failed to load data')
+            console.error('Error fetching gyms:', error)
+            toast.error('Failed to load gyms')
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const fetchCompetitions = async (gymId: number) => {
+        try {
+            setLoading(true)
+            
+            const response = await api.get(`/competitions?gymId=${gymId}`)
+            console.log('Competitions response:', response.data)
+            
+            let competitionsData: Competition[] = []
+            
+            if (response.data) {
+                if (response.data.status === 'success' && response.data.data) {
+                    competitionsData = response.data.data
+                } else if (Array.isArray(response.data)) {
+                    competitionsData = response.data
+                } else if (response.data.data && Array.isArray(response.data.data)) {
+                    competitionsData = response.data.data
+                }
+            }
+            
+            setCompetitions(competitionsData)
+
+        } catch (error) {
+            console.error('Error fetching competitions:', error)
+            toast.error('Failed to load competitions')
+            setCompetitions([])
         } finally {
             setLoading(false)
         }
     }
 
     const handleDeleteCompetition = async (competitionId: number) => {
+        if (!confirm('Are you sure you want to delete this competition? This action cannot be undone.')) {
+            return
+        }
+
         try {
             await api.delete(`/competitions/${competitionId}`)
             toast.success('Competition deleted successfully')
-            fetchGymAndCompetitions()
+            setCompetitions(prev => prev.filter(comp => comp.id !== competitionId))
         } catch (error) {
             console.error('Error deleting competition:', error)
             toast.error('Failed to delete competition')
         }
     }
 
-    const handleUpdateCompetition = (competitionId: number) => {
-        // TODO: Open update competition dialog
-        console.log('Update competition:', competitionId)
-        toast.info('Update competition feature coming soon')
+    const handleUpdateCompetition = (competition: Competition) => {
+        setEditingCompetition(competition)
+        setShowEditDialog(true)
     }
 
-    const handleDeleteTask = async (competitionId: number, taskId: number) => {
-        try {
-            await api.delete(`/competitions/tasks/${taskId}`)
-            toast.success('Task deleted successfully')
-            fetchGymAndCompetitions()
-        } catch (error) {
-            console.error('Error deleting task:', error)
-            toast.error('Failed to delete task')
+    const handleAddCompetition = () => {
+        setShowAddDialog(true)
+    }
+
+    const handleDialogClose = () => {
+        setShowAddDialog(false)
+        setShowEditDialog(false)
+        setEditingCompetition(null)
+        // Refresh competitions after adding/editing
+        if (selectedGymId) {
+            fetchCompetitions(selectedGymId)
         }
-    }
-
-    const handleUpdateTask = (competitionId: number, taskId: number) => {
-        // TODO: Open update task dialog
-        console.log('Update task:', taskId, 'from competition:', competitionId)
-        toast.info('Update task feature coming soon')
     }
 
     const formatDate = (dateString: string) => {
@@ -179,193 +181,242 @@ const CompetitionsPage = () => {
         })
     }
 
-    const getCompetitionStatus = (startDate: string, endDate: string) => {
+    const getCompetitionStatus = (startDate: string, endDate: string, isActive: boolean) => {
+        if (!isActive) {
+            return { status: 'inactive', color: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300' }
+        }
+
         const now = new Date()
         const start = new Date(startDate)
         const end = new Date(endDate)
 
         if (now < start) {
-            return { status: 'upcoming', color: 'bg-blue-100 text-blue-800' }
+            return { status: 'upcoming', color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300' }
         } else if (now > end) {
-            return { status: 'ended', color: 'bg-gray-100 text-gray-800' }
+            return { status: 'ended', color: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300' }
         } else {
-            return { status: 'active', color: 'bg-green-100 text-green-800' }
+            return { status: 'active', color: 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300' }
         }
     }
 
+    const selectedGym = gyms.find(gym => gym.id === selectedGymId)
+
     if (loading) {
         return (
-            <div className="flex items-center justify-center py-12">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
-                    <p className="mt-2 text-gray-600">Loading competitions...</p>
+            <div className="p-6">
+                <div className="flex items-center justify-center py-12">
+                    <div className="text-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+                        <p className="mt-2 text-muted-foreground">Loading...</p>
+                    </div>
                 </div>
             </div>
         )
     }
 
-    if (!gym) {
+    if (gyms.length === 0) {
         return (
-            <div className="text-center py-12">
-                <Trophy className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-2 text-sm font-medium text-gray-900">No gym found</h3>
-                <p className="mt-1 text-sm text-gray-500">
-                    Please create a gym first to manage competitions.
-                </p>
-            </div>
-        )
-    }
-
-    if (competitions.length === 0) {
-        return (
-            <div className="text-center py-12">
-                <Trophy className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-2 text-sm font-medium text-gray-900">No competitions</h3>
-                <p className="mt-1 text-sm text-gray-500">
-                    Get started by creating your first competition for {gym.name}.
-                </p>
+            <div className="p-6">
+                <div className="text-center py-12">
+                    <Building2 className="mx-auto h-12 w-12 text-muted-foreground" />
+                    <h3 className="mt-2 text-sm font-medium">No gyms found</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                        Please create a gym first to manage competitions.
+                    </p>
+                </div>
             </div>
         )
     }
 
     return (
-        <div className="space-y-6">
+        <div className="p-6 space-y-6">
             {/* Page Header */}
-            <div className="mb-6">
-                <h1 className="text-2xl font-bold">Competitions</h1>
-                <p className="text-gray-600">Manage competitions for {gym.name}</p>
+            <div className="flex justify-between items-center">
+                <div>
+                    <h1 className="text-2xl font-bold">Competitions</h1>
+                    <p className="text-muted-foreground">Manage competitions for your gyms</p>
+                </div>
+                {selectedGymId && (
+                    <Button className='cursor-pointer' onClick={handleAddCompetition}>
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Competition
+                    </Button>
+                )}
             </div>
 
-            {competitions.map((competition) => {
-                const statusInfo = getCompetitionStatus(competition.startDate, competition.endDate)
-
-                return (
-                    <Card key={competition.id} className="border-0 shadow-sm">
-                        <CardContent className="p-0">
-                            <div className="flex">
-                                {/* Image Section - 1/3 */}
-                                <div className="w-1/3 relative">
-                                    <div className="aspect-square relative overflow-hidden rounded-l-lg">
-                                        {competition.imageUrl ? (
-                                            <Image
-                                                src={`http://localhost:5000${competition.imageUrl}`}
-                                                alt={competition.name}
-                                                fill
-                                                className="object-cover"
-                                                sizes="33vw"
-                                            />
-                                        ) : (
-                                            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                                                <Trophy className="h-12 w-12 text-gray-400" />
-                                            </div>
-                                        )}
+            {/* Gym Selector */}
+            {gyms.length > 1 && (
+                <div className="mb-6">
+                    <label className="text-sm font-medium mb-2 block">Select Gym</label>
+                    <Select value={selectedGymId?.toString()} onValueChange={(value) => setSelectedGymId(Number(value))}>
+                        <SelectTrigger className="w-full max-w-md">
+                            <SelectValue placeholder="Choose a gym to manage competitions" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {gyms.map((gym) => (
+                                <SelectItem key={gym.id} value={gym.id.toString()}>
+                                    <div className="flex items-center gap-2">
+                                        <Building2 className="h-4 w-4" />
+                                        <span>{gym.name}</span>
                                     </div>
-                                </div>
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+            )}
 
-                                {/* Content Section - 2/3 */}
-                                <div className="w-2/3 p-6">
-                                    <div className="flex justify-between items-start mb-4">
-                                        <div>
-                                            <div className="flex items-center gap-2 mb-2">
-                                                <h3 className="text-xl font-semibold">{competition.name}</h3>
-                                                <Badge className={statusInfo.color}>
-                                                    {statusInfo.status}
-                                                </Badge>
-                                            </div>
-                                            <p className="text-gray-600 text-sm mb-3">{competition.description}</p>
+            {/* Show content only when a gym is selected */}
+            {selectedGymId && selectedGym ? (
+                <>
+                    {competitions.length === 0 ? (
+                        <div className="text-center py-12">
+                            <Trophy className="mx-auto h-12 w-12 text-muted-foreground" />
+                            <h3 className="mt-2 text-sm font-medium">No competitions</h3>
+                            <p className="mt-1 text-sm text-muted-foreground">
+                                Get started by creating your first competition for {selectedGym.name}.
+                            </p>
+                            <Button className="mt-4 cursor-pointer" onClick={handleAddCompetition}>
+                                <Plus className="h-4 w-4 mr-2" />
+                                Create Competition
+                            </Button>
+                        </div>
+                    ) : (
+                        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                            {competitions.map((competition) => {
+                                const statusInfo = getCompetitionStatus(
+                                    competition.startDate, 
+                                    competition.endDate, 
+                                    competition.isActive
+                                )
 
-                                            <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
-                                                <div className="flex items-center gap-1">
-                                                    <Calendar className="h-4 w-4" />
-                                                    <span>{formatDate(competition.startDate)} - {formatDate(competition.endDate)}</span>
-                                                </div>
-                                                <div className="flex items-center gap-1">
-                                                    <Users className="h-4 w-4" />
-                                                    <span>Max {competition.maxParticipants} participants</span>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* Competition Actions */}
-                                        <div className="flex gap-2">
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={() => handleUpdateCompetition(competition.id)}
-                                            >
-                                                <Edit className="h-4 w-4" />
-                                            </Button>
-                                            <Button
-                                                variant="destructive"
-                                                size="sm"
-                                                onClick={() => handleDeleteCompetition(competition.id)}
-                                            >
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                    </div>
-
-                                    {/* Tasks Section */}
-                                    {competition.tasks && competition.tasks.length > 0 && (
-                                        <div>
-                                            <div className="flex items-center gap-2 mb-3">
-                                                <Target className="h-4 w-4" />
-                                                <h4 className="font-medium">Tasks ({competition.tasks.length})</h4>
-                                            </div>
-
-                                            <div className="space-y-2">
-                                                {competition.tasks.map((task) => (
-                                                    <div key={task.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                                        <div className="flex-1">
-                                                            <div className="flex items-center gap-2 mb-1">
-                                                                <span className="font-medium text-sm">{task.name}</span>
-                                                                <Badge variant="secondary" className="text-xs">
-                                                                    {task.exerciseName}
-                                                                </Badge>
-                                                                <Badge variant="outline" className="text-xs">
-                                                                    {task.metric}
-                                                                </Badge>
-                                                            </div>
-                                                            <div className="flex items-center gap-4 text-xs text-gray-600">
-                                                                <span>Target: {task.targetValue} {task.unit}</span>
-                                                                <div className="flex items-center gap-1">
-                                                                    <Award className="h-3 w-3" />
-                                                                    <span>{task.pointsValue} points</span>
-                                                                </div>
-                                                            </div>
-                                                            {task.description && (
-                                                                <p className="text-xs text-gray-500 mt-1">{task.description}</p>
-                                                            )}
-                                                        </div>
-
-                                                        {/* Task Actions */}
-                                                        <div className="flex gap-1 ml-4">
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="sm"
-                                                                onClick={() => handleUpdateTask(competition.id, task.id)}
-                                                            >
-                                                                <Edit className="h-3 w-3" />
-                                                            </Button>
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="sm"
-                                                                onClick={() => handleDeleteTask(competition.id, task.id)}
-                                                            >
-                                                                <Trash2 className="h-3 w-3" />
-                                                            </Button>
-                                                        </div>
+                                return (
+                                    <Card key={competition.id} className="border-0 shadow-none bg-card/50 backdrop-blur-sm h-[400px] flex flex-col">
+                                        <CardContent className="p-0 flex flex-col h-full">
+                                            {/* Image Section */}
+                                            <div className="aspect-video relative overflow-hidden rounded-t-lg flex-shrink-0">
+                                                {competition.imageUrl ? (
+                                                    <Image
+                                                        src={`http://localhost:5000${competition.imageUrl}`}
+                                                        alt={competition.name}
+                                                        fill
+                                                        className="object-cover"
+                                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                                    />
+                                                ) : (
+                                                    <div className="w-full h-full bg-muted/50 flex items-center justify-center">
+                                                        <Trophy className="h-8 w-8 text-muted-foreground" />
                                                     </div>
-                                                ))}
+                                                )}
                                             </div>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                )
-            })}
+
+                                            {/* Content Section */}
+                                            <div className="p-4 flex flex-col flex-1">
+                                                <div className="flex items-start justify-between gap-2 mb-3">
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex items-center gap-2 mb-1">
+                                                            <h3 className="font-semibold text-sm truncate">{competition.name}</h3>
+                                                            <Badge className={`${statusInfo.color} text-xs shrink-0`}>
+                                                                {statusInfo.status}
+                                                            </Badge>
+                                                        </div>
+                                                        <p className="text-xs text-muted-foreground line-clamp-2">
+                                                            {competition.description}
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div className="space-y-2 text-xs text-muted-foreground mb-4 flex-1">
+                                                    <div className="flex items-center gap-1">
+                                                        <Calendar className="h-3 w-3 shrink-0" />
+                                                        <span className="truncate">
+                                                            {formatDate(competition.startDate)} - {formatDate(competition.endDate)}
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex items-center gap-1">
+                                                        <Users className="h-3 w-3 shrink-0" />
+                                                        <span>Max {competition.maxParticipants} participants</span>
+                                                    </div>
+                                                </div>
+
+                                                {/* Action Buttons */}
+                                                <div className="flex gap-2 mt-auto">
+                                                    <TasksDialog 
+                                                        competitionId={competition.id} 
+                                                        competitionName={competition.name}
+                                                    >
+                                                        <Button variant="outline" size="sm" className="flex-1 cursor-pointer">
+                                                            <Target className="h-3 w-3 mr-1" />
+                                                            Tasks
+                                                        </Button>
+                                                    </TasksDialog>
+                                                    
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        className='cursor-pointer'
+                                                        onClick={() => handleUpdateCompetition(competition)}
+                                                    >
+                                                        <Edit className="h-3 w-3" />
+                                                    </Button>
+                                                    
+                                                    <Button
+                                                        variant="destructive"
+                                                        size="sm"
+                                                        className='cursor-pointer'
+                                                        onClick={() => handleDeleteCompetition(competition.id)}
+                                                    >
+                                                        <Trash2 className="h-3 w-3" />
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                )
+                            })}
+                        </div>
+                    )}
+                </>
+            ) : gyms.length > 1 ? (
+                <div className="text-center py-12">
+                    <Building2 className="mx-auto h-12 w-12 text-muted-foreground" />
+                    <h3 className="mt-2 text-sm font-medium">Select a gym</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                        Choose a gym from the dropdown above to view and manage its competitions.
+                    </p>
+                </div>
+            ) : null}
+
+            {/* Add Competition Dialog */}
+            <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                        <DialogTitle>Add New Competition</DialogTitle>
+                    </DialogHeader>
+                    {selectedGym && (
+                        <AddCompetitionForm 
+                            gym={selectedGym} 
+                            onClose={handleDialogClose}
+                        />
+                    )}
+                </DialogContent>
+            </Dialog>
+
+            {/* Edit Competition Dialog */}
+            <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                        <DialogTitle>Edit Competition</DialogTitle>
+                    </DialogHeader>
+                    {selectedGym && editingCompetition && (
+                        <EditCompetitionForm 
+                            gym={selectedGym} 
+                            competition={editingCompetition}
+                            onClose={handleDialogClose}
+                        />
+                    )}
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }

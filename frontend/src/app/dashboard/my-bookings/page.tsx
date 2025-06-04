@@ -17,7 +17,7 @@ import { MembershipCard } from '@/components/gym/gym-membership-card';
 import ButterflyLoader from '@/components/butterfly-loader';
 import { useRoleProtection } from '@/hooks/use-role-protection';
 import { UserRole } from '@/components/auth/sign-up-form';
-import { Booking, BookingHistory, UserMembership } from '@/types/gym';
+import { Booking, UserMembership } from '@/types/gym';
 
 export default function BookingsAndMembershipsPage() {
   const [activeTab, setActiveTab] = useState('bookings');
@@ -27,7 +27,7 @@ export default function BookingsAndMembershipsPage() {
   const [upcomingBookings, setUpcomingBookings] = useState<Booking[]>([]);
   const [bookingHistory, setBookingHistory] = useState<Booking[]>([]);
 
-  const { isAuthorized, isLoading, user } = useRoleProtection({
+  const { isAuthorized, isLoading } = useRoleProtection({
     allowedRoles: [UserRole.REGULAR_USER]
   });
 
@@ -64,7 +64,7 @@ export default function BookingsAndMembershipsPage() {
   }, [fetchData]);
 
   const handleBookingAttendSuccess = useCallback(() => {
-    fetchData(); // Refetch all data to update the booking status and move it to history
+    fetchData(); 
   }, [fetchData]);
 
   const handleMembershipCancelSuccess = useCallback(() => {
@@ -123,7 +123,6 @@ export default function BookingsAndMembershipsPage() {
     <div className="flex flex-col min-h-screen">
       <main className="flex-1 container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mt-8 space-y-8 pb-10">
-          {/* Header with minimal stats */}
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <h1 className="text-2xl font-medium">Activity Overview</h1>
@@ -178,7 +177,6 @@ export default function BookingsAndMembershipsPage() {
             </div>
           </div>
 
-          {/* Main Content Tabs */}
           <Tabs
             defaultValue="bookings"
             value={activeTab}

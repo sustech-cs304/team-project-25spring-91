@@ -12,7 +12,6 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import React from "react"
-import { CalendarForm } from "./calendar-form"
 import { Calendar } from "@/components/ui/calendar"
 
 export function DialogAddGoal() {
@@ -26,7 +25,7 @@ export function DialogAddGoal() {
         <DialogHeader>
           <DialogTitle>Add your calories goal</DialogTitle>
           <DialogDescription>
-            Click save when you're done.
+            Click save when you are done.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">

@@ -21,39 +21,47 @@ const gymListSelect = {
 };
 
 const gymService = {
-  // ... (getAllGyms, getAllGymsAdmin, getMyGyms, getGymById, etc. remain the same) ...
 
-  getAllGyms: async ({ search, page = 1, limit = 10 }) => {
-    const skip = (page - 1) * limit;
-    const filters = {};
+getAllGyms: async ({ search, page = 1, limit = 10, paginate = true }) => {
+      const filters = {};
+      if (search) {
+        filters.OR = [
+          { name: { contains: search, mode: 'insensitive' } },
+          { description: { contains: search, mode: 'insensitive' } },
+        ];
+      }
 
-    if (search) {
-      filters.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } },
-      ];
-    }
+      if (!paginate) { // If paginate is false, fetch all
+        const gyms = await prisma.gym.findMany({
+          where: filters,
+          select: gymListSelect,
+          orderBy: { name: 'asc' },
+        });
+        return {
+          gyms,
+          totalItems: gyms.length, // Total items is the length of the array
+          paginationApplied: false,
+        };
+      }
 
-    const totalItems = await prisma.gym.count({
-      where: filters,
-    });
+      // Existing pagination logic
+      const skip = (page - 1) * limit;
+      const totalItems = await prisma.gym.count({ where: filters });
+      const gyms = await prisma.gym.findMany({
+        where: filters,
+        select: gymListSelect,
+        orderBy: { name: 'asc' },
+        skip,
+        take: limit,
+      });
 
-    const gyms = await prisma.gym.findMany({
-      where: filters,
-      select: gymListSelect,
-      orderBy: {
-        name: 'asc',
-      },
-      skip,
-      take: limit,
-    });
-
-    return {
-      gyms,
-      totalItems,
-      totalPages: Math.ceil(totalItems / limit),
-    };
-  },
+      return {
+        gyms,
+        totalItems,
+        totalPages: Math.ceil(totalItems / limit),
+        paginationApplied: true,
+      };
+    },
 
   getAllGymsAdmin: async () => {
     const gyms = await prisma.gym.findMany({
@@ -182,6 +190,15 @@ const gymService = {
     const count = await prisma.gym.count();
     return count;
   },
+
+  getOwnedGymCount: async (ownerId) => {
+      const count = await prisma.gym.count({
+        where: { ownerId },
+      });
+      return count;
+    }
+
+  
 };
 
 module.exports = { gymService };

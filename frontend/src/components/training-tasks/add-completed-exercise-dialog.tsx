@@ -25,7 +25,6 @@ import {
 import api from "@/lib/api"
 import axios from "axios"
 import { AddCompletedExerciseDialogProps } from '@/types/props';
-import { CompletedExercise } from '@/types/completed-exercise';
 
 
 
@@ -54,7 +53,6 @@ export function AddCompletedExerciseDialog({ propAddExercise }: AddCompletedExer
                 return;
             }
 
-            // Convert all values to numbers, defaulting to 0 if empty
             const actualReps = Number(reps) || 0;
             const actualSets = Number(sets) || 0;
             const actualDuration = Number(duration) || 0;
@@ -66,7 +64,6 @@ export function AddCompletedExerciseDialog({ propAddExercise }: AddCompletedExer
                 actualDuration
             });
 
-            // Reset form
             setSelectedExerciseId('');
             setReps('0');
             setSets('0');
@@ -124,12 +121,7 @@ export function AddCompletedExerciseDialog({ propAddExercise }: AddCompletedExer
         }
         return '';
     }
-    /**
-     * AI generated code 
-     * tool: chat-gpt 
-     * version: o3 mini high
-     * usage: because of the json struture from backend is a bit linear, i use to AI to help me group the exercises by category first before map it to frontend    
-     */
+
     const groupExercisesByCategory = (exercises: ExerciseOption[]) => {
         const groups: Record<string, ExerciseOption[]> = {};
 
@@ -152,7 +144,7 @@ export function AddCompletedExerciseDialog({ propAddExercise }: AddCompletedExer
                 <DialogHeader>
                     <DialogTitle>Add Completed Exercise</DialogTitle>
                     <DialogDescription>
-                        Enter exercise details. Use 0 for any fields that don't apply.
+                        Enter exercise details. Use 0 for any fields that do not apply.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
@@ -170,12 +162,7 @@ export function AddCompletedExerciseDialog({ propAddExercise }: AddCompletedExer
                                 </SelectValue>
                             </SelectTrigger>
                             <SelectContent>
-                                {/**
-                                * AI generated code 
-                                * tool: chat-gpt 
-                                * version: o3 mini high
-                                * usage: the mapping is a bit complex, i need some help to correct the tsx syntax 
-                                 */}
+
                                 {Object.entries(groupExercisesByCategory(exerciseOptions)).map(([category, exercises]) => (
                                     <SelectGroup key={category}>
                                         <SelectLabel className="capitalize">

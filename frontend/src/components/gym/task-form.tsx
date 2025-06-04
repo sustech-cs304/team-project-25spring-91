@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import Image from 'next/image'
 
 interface PreviewDialogProps {
   open: boolean
@@ -32,7 +33,7 @@ const PreviewDialog = ({
       return (
         <div className="space-y-4">
           {data.imagePreview && (
-            <img
+            <Image
               src={data.imagePreview}
               alt="Preview"
               className="w-full h-48 object-cover rounded"
@@ -59,7 +60,7 @@ const PreviewDialog = ({
       return (
         <div className="space-y-4">
           {data.imagePreview && (
-            <img
+            <Image
               src={data.imagePreview}
               alt="Preview"
               className="w-full h-48 object-cover rounded"
@@ -94,7 +95,7 @@ const PreviewDialog = ({
       return (
         <div className="space-y-4">
           {data.imagePreview && (
-            <img
+            <Image
               src={data.imagePreview}
               alt="Preview"
               className="w-full h-48 object-cover rounded"
@@ -146,12 +147,13 @@ const PreviewDialog = ({
         <DialogFooter>
           <Button
             variant="outline"
+            className='cursor-pointer'
             onClick={() => onOpenChange(false)}
             disabled={isSubmitting}
           >
             Cancel
           </Button>
-          <Button onClick={onConfirm} disabled={isSubmitting}>
+          <Button className='cursor-pointer' onClick={onConfirm} disabled={isSubmitting}>
             {isSubmitting ? 'Creating...' : 'Confirm & Create'}
           </Button>
         </DialogFooter>

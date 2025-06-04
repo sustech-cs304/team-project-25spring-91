@@ -6,7 +6,7 @@ import { useRoleProtection } from '@/hooks/use-role-protection';
 import React from 'react'
 
 const UserManagementPage = () => {
-    const { isAuthorized, isLoading, user } = useRoleProtection({
+    const { isAuthorized, isLoading } = useRoleProtection({
         allowedRoles: [UserRole.ADMIN]
     });
 

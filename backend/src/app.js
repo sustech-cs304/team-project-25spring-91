@@ -26,9 +26,14 @@ const foodItemRoutes = require('./routes/foodItem.routes');
 const dietEntryRoutes = require('./routes/dietEntry.routes');
 const aiRoutes = require('./routes/ai.routes');
 const uploadRoutes = require('./routes/uploads.routes');
+const stripeRoutes = require('./routes/stripe.routes'); 
 
 // Initialize express app
 const app = express();
+
+//raw body parser for Stripe webhooks must come before other middleware ****important
+app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }));
+
 
 // Middleware
 app.use(helmet({
@@ -40,7 +45,7 @@ app.use(cors({
   origin: ['http://localhost:3000', 'http://localhost:5000'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'Stripe-Signature']
 }));
 
 app.use(express.json());
@@ -50,7 +55,7 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Credentials', 'true');
   res.header('Access-Control-Allow-Origin', req.headers.origin);
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Stripe-Signature');
   next();
 });
 
@@ -91,6 +96,7 @@ app.use('/api/food-items', foodItemRoutes);
 app.use('/api/diet', dietEntryRoutes);
 app.use('/api/ai', authMiddleware, aiRoutes);
 app.use('/api/uploads', uploadRoutes);
+app.use('/api/stripe', stripeRoutes); 
 
 // Error handling middleware
 app.use(errorHandler);

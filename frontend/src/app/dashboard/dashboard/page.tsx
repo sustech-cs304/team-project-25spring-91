@@ -3,7 +3,6 @@
 
 import { useRoleProtection } from "@/hooks/use-role-protection";
 import { UserRole } from "@/components/auth/sign-up-form";
-import { LoadingSpinner } from "@/components/ui/loading";
 import ButterflyLoader from "@/components/butterfly-loader";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { CalorieGoals } from "@/components/dashboard/calorie-goals";

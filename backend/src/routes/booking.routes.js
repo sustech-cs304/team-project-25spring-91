@@ -22,9 +22,10 @@ router.get(
 );
 
 router.get(
-  '/history',
-  asyncHandler(bookingController.getBookingHistory)
-);
+    '/history',
+    validate(bookingSchemas.listBookingHistoryQuery), // Apply validation
+    asyncHandler(bookingController.getBookingHistory)
+  );
 
 router.get(
   '/:id',

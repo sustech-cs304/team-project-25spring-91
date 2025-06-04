@@ -112,6 +112,20 @@ const dietEntryController = {
       data: summary,
     });
   },
+  getMonthlyCalorieConsumption: async (req, res) => {
+    const userId = req.user.id;
+    // The Zod transform handles default, so req.query.months will be a number or undefined
+    // If undefined, the service default will apply.
+    const months = req.query.months ? parseInt(req.query.months) : undefined;
+
+
+    const monthlyData = await dietEntryService.getMonthlyCalorieConsumption(userId, months);
+
+    res.status(200).json({
+      status: 'success',
+      data: monthlyData,
+    });
+  },
 };
 
 module.exports = { dietEntryController };

@@ -1,6 +1,5 @@
 "use client";
 
-// Sample data with both volumeRank and streakRank
 const data: Stats[] = [
   {
     volumeRank: 1,
@@ -712,7 +711,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -727,8 +725,8 @@ import ButterflyLoader from "@/components/butterfly-loader";
 const yourRank = 1;
 
 const CompetitionPage = () => {
-  const [activeTab, setActiveTab] = useState<"volume" | "streak">("volume");
-  const { isAuthorized, isLoading, user } = useRoleProtection({
+  const [, setActiveTab] = useState<"volume" | "streak">("volume");
+  const { isAuthorized, isLoading } = useRoleProtection({
     allowedRoles: [UserRole.REGULAR_USER]
   });
 

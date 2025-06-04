@@ -42,7 +42,7 @@ export default function ChatPage() {
   const {
     isAuthorized,
     isLoading: authLoading,
-    user,
+    
   } = useRoleProtection({
     allowedRoles: [UserRole.REGULAR_USER],
   });

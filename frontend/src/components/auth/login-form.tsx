@@ -7,11 +7,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-// import { useAuth } from "@/context/auth-context";
 import { toast } from "sonner";
-import Cookies from 'js-cookie';
 import { useAuth } from "@/context/auth-context";
-import api from "@/lib/api";
 import axios from "axios";
 
 export function LoginForm({
@@ -21,8 +18,6 @@ export function LoginForm({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  // const { signIn, signInWithGoogle, signInWithGithub } = useAuth();
-  // const { signIn } = useAuth();
   const router = useRouter();
   const { login, loginWithOAuth } = useAuth();
 
@@ -37,8 +32,8 @@ export function LoginForm({
         description: "Welcome back!"
       });
 
-      // router.push('/dashboard/statistics');
-      router.push('/dashboard');
+      router.push('/dashboard/statistics');
+      // router.push('/dashboard');
 
     } catch (error) {
       let errorMessage = 'Failed to sign in';
@@ -76,48 +71,7 @@ export function LoginForm({
     }
   };
 
-  const handleManualSignIn = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
 
-    try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
-      }
-      const token = data.data.token;
-
-      // Save token to both localStorage and cookies
-      localStorage.setItem('auth-token', token);
-      Cookies.set('auth-token', token, { expires: 7 }); // Expires in 7 days
-
-      toast.success("Login successful", {
-        description: "Welcome back!"
-      });
-
-      // Save token to localStorage
-      localStorage.setItem('auth-token', data.data.token);
-
-      // Navigate to dashboard
-      router.push('/dashboard/statistics');
-
-    } catch (error) {
-      toast.error("Login failed", {
-        description: error instanceof Error ? error.message : "Something went wrong"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <form onSubmit={handleSubmit} className={cn("flex flex-col gap-6", className)} {...props}>

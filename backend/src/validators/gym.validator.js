@@ -9,6 +9,13 @@ const gymSchemas = {
       })
     })
   }),
+
+listAllGymsQuery: z.object({
+      search: z.string().optional(),
+      page: z.string().optional().transform(val => (val ? parseInt(val) : 1)),
+      limit: z.string().optional().transform(val => (val ? parseInt(val) : 10)),
+      paginate: z.string().optional().transform(val => val !== 'false'), // Defaults to true if not 'false'
+    }),
   
   createGym: z.object({
     body: z.object({
@@ -45,7 +52,9 @@ const gymSchemas = {
         message: 'Gym ID must be a number'
       })
     })
-  })
+  }),
+
+  
 };
 
 module.exports = { gymSchemas };

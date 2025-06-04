@@ -13,7 +13,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Trophy,
-  Target,
   Calendar,
   MapPin,
   Users,
@@ -60,7 +59,6 @@ export const CompetitionDetails: React.FC<CompetitionDetailsProps> = ({
   );
   const [userProgressData, setUserProgressData] = useState<any>(null);
 
-  // Pagination states
   const [tasksPage, setTasksPage] = useState(1);
   const [leaderboardPage, setLeaderboardPage] = useState(1);
   const itemsPerPage = 5;
@@ -69,14 +67,12 @@ export const CompetitionDetails: React.FC<CompetitionDetailsProps> = ({
   const comp = isUserCompetition ? competition.competition : competition;
   const userProgress = isUserCompetition ? competition : null;
 
-  // Calculate pagination for tasks
   const totalTasksPages = Math.ceil(allTasks.length / itemsPerPage);
   const paginatedTasks = allTasks.slice(
     (tasksPage - 1) * itemsPerPage,
     tasksPage * itemsPerPage
   );
 
-  // Calculate pagination for leaderboard
   const totalLeaderboardPages = Math.ceil(allLeaderboard.length / itemsPerPage);
   const paginatedLeaderboard = allLeaderboard.slice(
     (leaderboardPage - 1) * itemsPerPage,
@@ -91,7 +87,6 @@ export const CompetitionDetails: React.FC<CompetitionDetailsProps> = ({
     });
   };
 
-  // Check if user can join competition
   const canJoinCompetition = (): boolean => {
     const now = new Date();
     const startDate = new Date(comp.startDate);
@@ -106,7 +101,6 @@ export const CompetitionDetails: React.FC<CompetitionDetailsProps> = ({
     );
   };
 
-  // Check if user can update progress
   const canUpdateProgress = (): boolean => {
     if (type !== "ongoing") return false;
     
@@ -134,7 +128,6 @@ export const CompetitionDetails: React.FC<CompetitionDetailsProps> = ({
   useEffect(() => {
     if (open) {
       fetchCompetitionData();
-      // Reset pagination when opening
       setTasksPage(1);
       setLeaderboardPage(1);
     }
@@ -143,7 +136,6 @@ export const CompetitionDetails: React.FC<CompetitionDetailsProps> = ({
   const fetchCompetitionData = async () => {
     setLoading(true);
     try {
-      // For ongoing/completed competitions (user competitions), use the progress API
       if (type === "ongoing" || type === "completed") {
         const progressResponse = await api.get(
           `/competitions/user/competitions/${comp.id}/progress`
@@ -154,14 +146,12 @@ export const CompetitionDetails: React.FC<CompetitionDetailsProps> = ({
         setAllTasks(progressData.tasks || []);
         setCompetitionData(progressData.participant.competition);
       } else {
-        // For available competitions, use the regular competition API
         const competitionResponse = await api.get(`/competitions/${comp.id}`);
         const competitionData = competitionResponse.data.data;
         setCompetitionData(competitionData);
         setAllTasks(competitionData.competitionTasks || []);
       }
 
-      // Fetch leaderboard for all types
       const leaderboardResponse = await api.get(
         `/competitions/${comp.id}/leaderboard`
       );
@@ -271,7 +261,6 @@ export const CompetitionDetails: React.FC<CompetitionDetailsProps> = ({
           </DialogHeader>
 
           <div className="space-y-6">
-            {/* Competition Image */}
             <div className="relative">
               <img
                 src={comp.imageUrl || "/api/placeholder/800/300"}
@@ -293,7 +282,6 @@ export const CompetitionDetails: React.FC<CompetitionDetailsProps> = ({
               </div>
             </div>
 
-            {/* Competition Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Card>
                 <CardContent className="p-4">
@@ -357,13 +345,11 @@ export const CompetitionDetails: React.FC<CompetitionDetailsProps> = ({
               )}
             </div>
 
-            {/* Description */}
             <div>
               <h3 className="text-lg font-semibold mb-2">Description</h3>
               <p className="text-muted-foreground">{comp.description}</p>
             </div>
 
-            {/* Tabs for Tasks and Leaderboard */}
             <Tabs defaultValue="tasks" className="w-full">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="tasks">
@@ -438,7 +424,6 @@ export const CompetitionDetails: React.FC<CompetitionDetailsProps> = ({
                                 {task.description}
                               </p>
                               
-                              {/* Progress bar for ongoing/completed competitions */}
                               {(type === "ongoing" || type === "completed") && (
                                 <div className="space-y-2 mb-3">
                                   <div className="flex justify-between text-sm">
@@ -497,7 +482,6 @@ export const CompetitionDetails: React.FC<CompetitionDetailsProps> = ({
                       })}
                     </div>
 
-                    {/* Tasks Pagination */}
                     {totalTasksPages > 1 && (
                       <div className="flex items-center justify-center gap-2 mt-4">
                         <Button
@@ -585,7 +569,6 @@ export const CompetitionDetails: React.FC<CompetitionDetailsProps> = ({
                       })}
                     </div>
 
-                    {/* Leaderboard Pagination */}
                     {totalLeaderboardPages > 1 && (
                       <div className="flex items-center justify-center gap-2 mt-4">
                         <Button

@@ -390,7 +390,7 @@ const MealLogger: React.FC = () => {
       const results = await Promise.all(createPromises);
       console.log('All diet entries created successfully:', results.map(r => r.data));
 
-      await fetchDietEntries(); // Refresh data
+      await fetchDietEntries(); 
       logSuccess('handleAddNewMeal', { mealTitle: meal.title, foodItemsCount: meal.foodItems?.length });
       toast.success('Meal added successfully');
     } catch (error) {

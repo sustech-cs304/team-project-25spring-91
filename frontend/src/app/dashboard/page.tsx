@@ -2,7 +2,6 @@
 "use client";
 
 import { useAuth } from "@/context/auth-context";
-import { LoadingSpinner } from "@/components/ui/loading";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { UserRole } from "@/components/auth/sign-up-form";

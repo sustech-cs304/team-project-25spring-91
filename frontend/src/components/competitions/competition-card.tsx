@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Calendar, MapPin, Trophy, Target, AlertCircle } from "lucide-react";
 import { Competition, UserCompetition } from "@/types/competition";
+import Image from "next/image";
 
 interface CompetitionCardProps {
   competition: Competition | UserCompetition;
@@ -60,8 +61,8 @@ export const CompetitionCard: React.FC<CompetitionCardProps> = ({
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
       <div className="relative">
-        <img
-          src={comp.imageUrl || "/api/placeholder/400/200"}
+        <Image
+          src={`http://localhost:5000${comp.imageUrl}`|| "/api/placeholder/400/200"}
           alt={comp.name}
           className="w-full h-48 object-cover"
         />
@@ -104,7 +105,6 @@ export const CompetitionCard: React.FC<CompetitionCardProps> = ({
           </span>
         </div>
 
-        {/* Participant count for available competitions */}
         {type === "available" && (
           <div className="flex items-center gap-1 text-sm text-muted-foreground">
             <Trophy className="h-4 w-4" />
@@ -142,7 +142,6 @@ export const CompetitionCard: React.FC<CompetitionCardProps> = ({
           </div>
         )}
 
-        {/* Warning message for unavailable competitions */}
         {type === "available" && !canJoin && (
           <div className="flex items-start gap-2 p-2 bg-muted rounded-md">
             <AlertCircle className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />

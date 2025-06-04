@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/auth-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,6 +12,7 @@ import { toast } from "sonner";
 import { useRoleProtection } from "@/hooks/use-role-protection";
 import { UserRole } from "@/components/auth/sign-up-form";
 import ButterflyLoader from "@/components/butterfly-loader";
+import Image  from "next/image";
 
 interface CreateGymFormData {
   name: string;
@@ -23,7 +23,6 @@ interface CreateGymFormData {
 
 export default function CreateGymPage() {
   const router = useRouter();
-  const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
@@ -97,12 +96,11 @@ export default function CreateGymPage() {
       submitData.append("description", formData.description);
       submitData.append("contactInfo", formData.contactInfo);
 
-      // Append image file if selected
       if (imageFile) {
         submitData.append("image", imageFile);
       }
 
-      const response = await api.post("/gyms", submitData, {
+      await api.post("/gyms", submitData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -125,7 +123,6 @@ export default function CreateGymPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto py-6 px-4 max-w-4xl">
-        {/* Header */}
         <div className="mb-8">
           <Button
             variant="ghost"
@@ -145,15 +142,12 @@ export default function CreateGymPage() {
           </div>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-12">
-          {/* Basic Information Section */}
           <div className="space-y-6">
             <h2 className="text-2xl font-semibold text-foreground border-b border-border pb-2">
               Basic Information
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Gym Name */}
               <div className="space-y-3">
                 <Label htmlFor="name" className="text-base font-medium">
                   Gym Name *
@@ -170,7 +164,6 @@ export default function CreateGymPage() {
                 />
               </div>
 
-              {/* Address */}
               <div className="space-y-3">
                 <Label htmlFor="address" className="text-base font-medium">
                   Address *
@@ -187,7 +180,6 @@ export default function CreateGymPage() {
                 />
               </div>
 
-              {/* Contact Info - Full Width */}
               <div className="space-y-3 md:col-span-2">
                 <Label htmlFor="contactInfo" className="text-base font-medium">
                   Contact Information *
@@ -206,7 +198,6 @@ export default function CreateGymPage() {
             </div>
           </div>
 
-          {/* Description Section */}
           <div className="space-y-6">
             <h2 className="text-2xl font-semibold text-foreground border-b border-border pb-2">
               Description
@@ -227,7 +218,6 @@ export default function CreateGymPage() {
             </div>
           </div>
 
-          {/* Image Upload Section */}
           <div className="space-y-6">
             <h2 className="text-2xl font-semibold text-foreground border-b border-border pb-2">
               Gym Image
@@ -235,7 +225,7 @@ export default function CreateGymPage() {
             <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 bg-muted/20 hover:bg-muted/30 transition-colors">
               {imagePreview ? (
                 <div className="relative max-w-2xl mx-auto">
-                  <img
+                  <Image
                     src={imagePreview}
                     alt="Gym preview"
                     className="w-full h-80 object-cover rounded-lg"
@@ -277,7 +267,6 @@ export default function CreateGymPage() {
             </div>
           </div>
 
-          {/* Submit Buttons */}
           <div className="flex gap-6 pt-8 border-t border-border">
             <Button
               type="button"

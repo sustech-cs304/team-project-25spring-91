@@ -17,7 +17,6 @@ import React from 'react';
 import { UserRole } from '@/components/auth/sign-up-form';
 import { getDefaultDashboard } from "@/hooks/use-role-protection";
 
-// Basic route mapping
 const routeNames: Record<string, string> = {
   'dashboard': 'Dashboard',
   'statistics': 'Statistics',
@@ -37,7 +36,8 @@ const routeNames: Record<string, string> = {
   'my-gyms': 'My Gyms',
   'chat': 'Ask AI',
   'logged-meals': 'Logged Meals',
-  // add more routes
+  'competitions': 'Competitions',
+  'classes': 'Classes'
 };
 
 export default function DashboardLayout({
@@ -64,74 +64,12 @@ export default function DashboardLayout({
           }
         }
 
-        //else if (pathname.includes('other-route/')) {
-        //fetch other dynamic data
-        //}
       }
     };
 
     fetchDynamicName();
   }, [pathname]);
-
-  // return (
-  //   <SidebarProvider>
-  //     <AppSidebar />
-  //     <SidebarInset>
-  //       <Header />
-  //       <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-  //         <SidebarTrigger className="-ml-1" />
-  //         <Separator
-  //           orientation="vertical"
-  //           className="mr-2 data-[orientation=vertical]:h-4"
-  //         />
-  //         <Breadcrumb>
-  //           <BreadcrumbList>
-  //             {paths.map((path, index) => {
-  //               const isLast = index === paths.length - 1;
-  //               const defaultHref = `/${paths.slice(0, index + 1).join('/')}`;
-                
-
-  //               let href: string;
-  //               if (path === "admin") {
-  //                 href = getDefaultDashboard(UserRole.ADMIN);
-  //               } else if (path === "gym-owner") {
-  //                 href = getDefaultDashboard(UserRole.GYM_OWNER);
-  //               } else {
-  //                 href = defaultHref;
-  //               }
-
-  //               const isUUID = path.match(/^[0-9a-fA-F-]+$/);
-  //               const displayName = isUUID ? (dynamicName || '...') : (routeNames[path] || path);
-
-  //               const uniqueKey = `${index}-${path}`;
-
-
-
-  //               return (
-  //                 <React.Fragment key={uniqueKey}> 
-  //                   <BreadcrumbItem>
-  //                     {!isLast ? (
-  //                       <BreadcrumbLink href={href}>
-  //                         {displayName}
-  //                       </BreadcrumbLink>
-  //                     ) : (
-  //                       <BreadcrumbPage>{displayName}</BreadcrumbPage>
-  //                     )}
-  //                   </BreadcrumbItem>
-  //                   {!isLast && (
-  //                     <BreadcrumbSeparator />
-  //                   )}
-  //                 </React.Fragment>
-  //               );
-  //             })}
-  //           </BreadcrumbList>
-  //         </Breadcrumb>
-  //       </header>
-  //       {children}
-  //     </SidebarInset>
-  //   </SidebarProvider>
-  // )
-return (
+  return (
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
@@ -147,7 +85,7 @@ return (
               {paths.map((path, index) => {
                 const isLast = index === paths.length - 1;
                 const defaultHref = `/${paths.slice(0, index + 1).join('/')}`;
-                
+
 
                 let href: string;
                 if (path === "admin") {
@@ -166,7 +104,7 @@ return (
 
 
                 return (
-                  <React.Fragment key={uniqueKey}> 
+                  <React.Fragment key={uniqueKey}>
                     <BreadcrumbItem>
                       {!isLast ? (
                         <BreadcrumbLink href={href}>

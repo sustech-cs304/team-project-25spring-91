@@ -1,5 +1,8 @@
 // src/controllers/users.controller.js
 const { userService } = require('../services/users.service');
+const { gymService } = require('../services/gym.service'); 
+const { bookingService } = require('../services/booking.service'); 
+const { membershipService } = require('../services/membership.service'); 
 const fs = require('fs').promises;
 const path = require('path');
 const { ApiError } = require('../utils/ApiError'); // Make sure ApiError is imported
@@ -135,6 +138,29 @@ const userController = {
       data: signups,
     });
   },
+
+  getGymOwnerDashboardStats: async (req, res) => {
+    const ownerId = req.user.id; // Assuming gym_owner is logged in
+
+    const [
+      ownedGymCount,
+      totalBookings,
+      currentMonthRevenue,
+    ] = await Promise.all([
+      gymService.getOwnedGymCount(ownerId),
+      bookingService.getTotalBookingsForOwnedGyms(ownerId),
+      membershipService.getCurrentMonthRevenueForOwnedGyms(ownerId),
+    ]);
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        totalOwnedGyms: ownedGymCount,
+        totalBookingsInOwnedGyms: totalBookings,
+        revenueThisMonth: parseFloat(currentMonthRevenue.toString()), // Ensure it's a number
+      },
+    });
+  }
 };
 
 module.exports = { userController };

@@ -33,21 +33,7 @@ const statusStyles: Record<MembershipStatus, string> = {
   expired: 'bg-muted text-muted-foreground',
 };
 
-interface MembershipPlan {
-  id: number;
-  name: string;
-  description: string;
-  durationDays: number;
-  price: string;
-  maxBookingsPerWeek: number;
-}
 
-interface Gym {
-  id: number;
-  name: string;
-  address: string;
-  imageUrl: string | null;
-}
 
 
 

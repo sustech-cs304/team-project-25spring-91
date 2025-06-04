@@ -7,25 +7,36 @@ const path = require('path');
 
 // ... (getAllGyms, getAllGymsAdmin, getMyGyms, getGymById, etc. remain the same) ...
 const getAllGyms = async (req, res) => {
-  const { search, page = 1, limit = 10 } = req.query;
-  const result = await gymService.getAllGyms({
-    search,
-    page: parseInt(page),
-    limit: parseInt(limit),
-  });
+    // Use validated query params if validator is applied, otherwise parse directly
+    const { search, page, limit, paginate } = req.query;
 
-  res.status(200).json({
-    status: 'success',
-    results: result.gyms.length,
-    pagination: {
-      page: parseInt(page),
-      limit: parseInt(limit),
-      totalPages: result.totalPages,
-      totalItems: result.totalItems,
-    },
-    data: result.gyms,
-  });
-};
+    const result = await gymService.getAllGyms({
+      search,
+      page: page ? parseInt(page) : 1,
+      limit: limit ? parseInt(limit) : 10,
+      paginate: paginate !== 'false', // Convert "false" string to boolean false
+    });
+
+    if (!result.paginationApplied) {
+      res.status(200).json({
+        status: 'success',
+        results: result.totalItems,
+        data: result.gyms,
+      });
+    } else {
+      res.status(200).json({
+        status: 'success',
+        results: result.gyms.length,
+        pagination: {
+          page: page ? parseInt(page) : 1,
+          limit: limit ? parseInt(limit) : 10,
+          totalPages: result.totalPages,
+          totalItems: result.totalItems,
+        },
+        data: result.gyms,
+      });
+    }
+  };
 
 const getAllGymsAdmin = async (req, res) => {
   const gyms = await gymService.getAllGymsAdmin();

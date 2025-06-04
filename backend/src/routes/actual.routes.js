@@ -24,6 +24,12 @@ router.get(
 );
 
 router.get(
+  '/monthly-calories',
+  validate(actualSchemas.getMonthlyCaloriesQuery), // Validate query params
+  asyncHandler(actualController.getMonthlyCalorieBurn),
+);
+
+router.get(
   '/:id',
   validate(actualSchemas.getActualWorkout),
   asyncHandler(actualController.getActualWorkoutById)

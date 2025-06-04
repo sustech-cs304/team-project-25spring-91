@@ -253,6 +253,75 @@ const dietEntryService = {
       mealTypeSummary,
     };
   },
+
+  getMonthlyCalorieConsumption: async (userId, numberOfMonths = 12) => {
+    const today = new Date();
+    const startDate = new Date(
+      today.getFullYear(),
+      today.getMonth() - (numberOfMonths - 1), // Go back (numberOfMonths - 1) full months
+      1, // Start from the 1st day of that month
+    );
+    startDate.setHours(0, 0, 0, 0);
+
+    // Fetch diet entries within the date range that have calories
+    const dietEntries = await prisma.dietEntry.findMany({
+      where: {
+        userId,
+        consumptionDate: {
+          gte: startDate,
+          lte: today, // Up to today
+        },
+        calories: {
+          not: null, // Ensure calories are logged
+          gt: 0,     // Optionally, only count if calories > 0
+        },
+      },
+      select: {
+        consumptionDate: true,
+        calories: true,
+      },
+      orderBy: {
+        consumptionDate: 'asc',
+      },
+    });
+
+    const monthlyCalories = {};
+
+    // Initialize months in the range with 0 calories
+    for (let i = 0; i < numberOfMonths; i++) {
+      const monthDate = new Date(today.getFullYear(), today.getMonth() - i, 1);
+      const monthKey = `${monthDate.getFullYear()}-${String(
+        monthDate.getMonth() + 1,
+      ).padStart(2, '0')}`;
+      monthlyCalories[monthKey] = 0;
+    }
+
+    // Aggregate calories per month
+    dietEntries.forEach((entry) => {
+      const year = entry.consumptionDate.getFullYear();
+      const month = String(entry.consumptionDate.getMonth() + 1).padStart(2, '0');
+      const monthKey = `${year}-${month}`;
+
+      if (entry.calories) { // Should always be true due to where clause, but good practice
+        if (monthlyCalories[monthKey] !== undefined) {
+          monthlyCalories[monthKey] += parseFloat(entry.calories.toString());
+        } else {
+          // Fallback, though initialization should cover this
+          monthlyCalories[monthKey] = parseFloat(entry.calories.toString());
+        }
+      }
+    });
+
+    // Convert to sorted array format
+    const result = Object.entries(monthlyCalories)
+      .map(([month, totalCalories]) => ({
+        month,
+        totalCalories: parseFloat(totalCalories.toFixed(2)), // Ensure two decimal places
+      }))
+      .sort((a, b) => (a.month < b.month ? -1 : 1)); // Sort chronologically
+
+    return result;
+  }
 };
 
 module.exports = { dietEntryService };

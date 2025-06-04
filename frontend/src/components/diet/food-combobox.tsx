@@ -34,7 +34,7 @@ export function SearchableCombobox({
   const wrapperRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   // Track the last matched value to detect changes
-  const [lastMatchedValue, setLastMatchedValue] = useState("")
+  const [, setLastMatchedValue] = useState("")
   // Add this flag to track mousedown events inside the component
   const [isMouseDown, setIsMouseDown] = useState(false)
 

@@ -2,6 +2,7 @@
 const { z } = require('zod');
 
 const classSchemas = {
+
   getClass: z.object({
     params: z.object({
       id: z.string().refine(val => !isNaN(parseInt(val)), {
@@ -9,6 +10,15 @@ const classSchemas = {
       })
     })
   }),
+
+  listAllGymClassesQuery: z.object({
+      gymId: z.string().optional().transform(val => (val ? parseInt(val) : undefined)),
+      difficultyLevel: z.string().optional(),
+      search: z.string().optional(),
+      page: z.string().optional().transform(val => (val ? parseInt(val) : 1)),
+      limit: z.string().optional().transform(val => (val ? parseInt(val) : 10)),
+      paginate: z.string().optional().transform(val => val !== 'false'), // Defaults to true
+    }),
   
   createClass: z.object({
     body: z.object({

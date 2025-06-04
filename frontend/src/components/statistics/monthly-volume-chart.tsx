@@ -9,20 +9,20 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "../ui/card"
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
+} from "../ui/chart"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "../ui/select"
 
 interface YearlyVolume {
   year: number;
@@ -127,12 +127,12 @@ export function AnnualLineChart({ chartData }: ComponentProps) {
     });
   }, [timeRange, sortedChartData, currentYear, currentMonth]);
 
-  const total = React.useMemo(
-    () => ({
-      count: filteredData.reduce((acc, curr) => acc + curr.volume, 0),
-    }),
-    [filteredData]
-  );
+  // const total = React.useMemo(
+  //   () => ({
+  //     count: filteredData.reduce((acc, curr) => acc + curr.volume, 0),
+  //   }),
+  //   [filteredData]
+  // );
 
   // Calculate the maximum volume for proper scaling
   const maxVolume = React.useMemo(() => {

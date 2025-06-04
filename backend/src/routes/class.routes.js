@@ -13,10 +13,10 @@ const router = express.Router();
 
 // Public routes
 router.get(
-  '/',
-  asyncHandler(classController.getAllGymClasses)
-);
-
+    '/',
+    validate(classSchemas.listAllGymClassesQuery), // Apply validation
+    asyncHandler(classController.getAllGymClasses)
+  );
 router.get(
   '/:id',
   validate(classSchemas.getClass),

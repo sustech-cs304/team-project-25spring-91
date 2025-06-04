@@ -118,7 +118,20 @@ const actualController = {
       status: 'success',
       message: 'Workout log deleted successfully'
     });
+  },
+
+  getMonthlyCalorieBurn: async (req, res) => {
+    const userId = req.user.id;
+    const months = req.query.months ? parseInt(req.query.months) : 12; // Default to 12 if not provided
+
+    const monthlyData = await actualService.getMonthlyCalorieBurn(userId, months);
+
+    res.status(200).json({
+      status: 'success',
+      data: monthlyData,
+    });
   }
+
 };
 
 module.exports = { actualController };

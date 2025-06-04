@@ -6,6 +6,7 @@ import { Gym, MembershipPlan } from '@/types/gym';
 import { motion, AnimatePresence } from "framer-motion";
 import axios from 'axios';
 import { toast } from 'sonner';
+import { useAuth } from '@/context/auth-context';
 import api from '@/lib/api';
 
 type StepNumber = 1 | 2;
@@ -21,7 +22,9 @@ const stepTitles: Record<StepNumber, string> = {
   2: "Confirmation"
 };
 
+
 const MembershipDialog: React.FC<MembershipDialogProps> = ({ gym, open, onOpenChange }) => {
+  const { user } = useAuth(); 
   const [step, setStep] = React.useState<StepNumber>(1);
   const [loading, setLoading] = React.useState<boolean>(true);
   const [membershipPlans, setMembershipPlans] = React.useState<MembershipPlan[]>([]);
@@ -33,11 +36,7 @@ const MembershipDialog: React.FC<MembershipDialogProps> = ({ gym, open, onOpenCh
     }
   }, [gym.id, open]);
 
-  const resetAndClose = () => {
-    onOpenChange(false);
-    setStep(1);
-    setSelectedPlan(null);
-  };
+
 
   const handleNext = () => {
     if (!selectedPlan) return;
@@ -66,7 +65,35 @@ const MembershipDialog: React.FC<MembershipDialogProps> = ({ gym, open, onOpenCh
       setLoading(false);
     }
   };
+const handleSubscribe = async () => {
+  if (!user) {
+    toast.error('Please log in to subscribe');
+    return;
+  }
 
+  try {
+    setLoading(true);
+    
+    const { data } = await api.post('/stripe/create-checkout-session', {
+      planId: selectedPlan?.id,
+      gymId: gym.id,
+      userEmail: user?.email,
+      successUrl: `${window.location.origin}/dashboard/my-bookings`,
+      cancelUrl: `${window.location.origin}/dashboard/my-bookings`,
+    });
+
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      toast.error('Failed to create checkout session');
+    }
+  } catch (error) {
+    console.error('Error creating checkout session:', error);
+    toast.error('Failed to create checkout session');
+  } finally {
+    setLoading(false);
+  }
+};
   const renderStepContent = () => {
     switch (step) {
       case 1:
@@ -90,8 +117,8 @@ const MembershipDialog: React.FC<MembershipDialogProps> = ({ gym, open, onOpenCh
                       No Plans Available
                     </h3>
                     <p className="text-sm text-muted-foreground max-w-md">
-                      This gym doesn't have any membership plans available at the
-                      moment. 
+                      This gym does not have any membership plans available at the
+                      moment.
                     </p>
                   </div>
                 </div>
@@ -169,7 +196,7 @@ const MembershipDialog: React.FC<MembershipDialogProps> = ({ gym, open, onOpenCh
                 {gym.name}
               </div>
               <div className="space-y-2">
-                <p className="text-muted-foreground">You've selected the:</p>
+                <p className="text-muted-foreground">You have selected the:</p>
                 <p className="text-3xl font-bold tracking-tight">{selectedPlan?.name} Plan</p>
                 <p className="mt-4 text-sm text-muted-foreground max-w-md mx-auto">
                   Please complete the payment by clicking the subscribe button below.
@@ -213,7 +240,7 @@ const MembershipDialog: React.FC<MembershipDialogProps> = ({ gym, open, onOpenCh
             </Button>
           ) : (
             <div className="flex w-full justify-between gap-4">
-              <Button
+              <Button 
                 variant="outline"
                 onClick={handleBack}
                 className="min-w-[100px] transition-all duration-300"
@@ -221,16 +248,20 @@ const MembershipDialog: React.FC<MembershipDialogProps> = ({ gym, open, onOpenCh
                 Back
               </Button>
               <Button
-                onClick={resetAndClose}
-                className="min-w-[100px] transition-all duration-300"
+                onClick={handleSubscribe}
+
+              className="min-w-[100px] transition-all duration-300"
               >
-                Done
-              </Button>
+                {/* <Link href={`${'https://buy.stripe.com/test_bIY8wI4kQ4Ba9cQdQS'}?prefilled_email=${user?.email}`}>
+                Subscribe
+              </Link> */}
+              Done
+            </Button>
             </div>
           )}
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      </DialogFooter>
+    </DialogContent>
+    </Dialog >
   );
 };
 

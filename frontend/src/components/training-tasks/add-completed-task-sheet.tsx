@@ -14,13 +14,12 @@ import { Calendar } from "../ui/calendar"
 import { toast } from "sonner"
 import React, { useEffect } from "react"
 import { AddCompletedExerciseDialog } from "../training-tasks/add-completed-exercise-dialog"
-import { AArrowDown, Plus, Trash2 } from "lucide-react"
+import { Plus, Trash2 } from "lucide-react"
 import api from "@/lib/api"
 import axios from "axios"
 
 import { AddCompletedTaskSheetProps } from '@/types/props';
 import { CompletedExercise } from '@/types/completed-exercise';
-import { CompletedWorkout } from '@/types/completed-workout';
 
 
 interface ExerciseOption {

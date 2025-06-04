@@ -2,312 +2,13 @@
 const prisma = require('../config/prisma');
 const { ApiError } = require('../utils/ApiError');
 
-const statisticsService = {
-  // Get user's workout statistics dashboard data
-  getDashboardStatistics: async (userId) => {
-    // Get all the required statistics in one comprehensive API call
-    const dashboardData = {};
-    
-    // 1. Completed Workout Sessions count
-    dashboardData.completedWorkoutSessions = await prisma.actualWorkout.count({
-      where: { userId }
-    });
-    
-    // 2. Current Month Completion Rate
-    const currentDate = new Date();
-    const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-    const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-    
-    // Get planned workouts for the current month
-    const plannedWorkoutsThisMonth = await prisma.plannedWorkout.count({
-      where: {
-        userId,
-        scheduledDate: {
-          gte: firstDayOfMonth,
-          lte: lastDayOfMonth
-        }
-      }
-    });
-    
-    // Get completed workouts that were linked to planned workouts
-    const completedPlannedWorkoutsThisMonth = await prisma.actualWorkout.count({
-      where: {
-        userId,
-        plannedId: { not: null }, // Only count those linked to planned workouts
-        completedDate: {
-          gte: firstDayOfMonth,
-          lte: lastDayOfMonth
-        }
-      }
-    });
-    
-    // Calculate rate based on planned workouts that were completed
-    dashboardData.currentMonthCompletionRate = plannedWorkoutsThisMonth > 0
-      ? Math.min(100, (completedPlannedWorkoutsThisMonth / plannedWorkoutsThisMonth) * 100)
-      : 0;
-    
-    // 3. Monthly Workout Sessions (for the last 5 years)
-    const currentYear = currentDate.getFullYear();
-    const lastFiveYearsData = [];
-    
-    // Loop through the last 5 years (including current)
-    for (let yearOffset = 0; yearOffset < 5; yearOffset++) {
-      const year = currentYear - yearOffset;
-      const yearData = {
-        year,
-        months: []
-      };
-      
-      // Get data for each month in this year
-      for (let month = 0; month < 12; month++) {
-        const startDate = new Date(year, month, 1);
-        const endDate = new Date(year, month + 1, 0);
-        
-        // Skip future months in current year
-        if (yearOffset === 0 && startDate > currentDate) {
-          yearData.months.push({
-            month: month + 1,
-            monthName: new Date(year, month, 1).toLocaleString('default', { month: 'long' }),
-            count: 0
-          });
-          continue;
-        }
-        
-        const count = await prisma.actualWorkout.count({
-          where: {
-            userId,
-            completedDate: {
-              gte: startDate,
-              lte: endDate
-            }
-          }
-        });
-        
-        yearData.months.push({
-          month: month + 1,
-          monthName: new Date(year, month, 1).toLocaleString('default', { month: 'long' }),
-          count
-        });
-      }
-      
-      lastFiveYearsData.push(yearData);
-    }
-    
-    dashboardData.workoutsByYear = lastFiveYearsData;
-    
-    // Also include currentYear data separately for backward compatibility
-    dashboardData.monthlyCompletedWorkouts = lastFiveYearsData[0].months;
-    
-    // 4. Weekly Streaks (both longest and current)
-    const allWorkouts = await prisma.actualWorkout.findMany({
-      where: { userId },
-      select: { completedDate: true },
-      orderBy: { completedDate: 'asc' }
-    });
-    
-    const streaks = calculateWeeklyStreaks(allWorkouts.map(w => w.completedDate));
-    
-    // Add debugging info to help understand streak calculation
-    console.log("Total workouts:", allWorkouts.length);
-    console.log("Longest streak:", streaks.longest);
-    console.log("Current streak:", streaks.current);
-    
-    dashboardData.longestStreak = streaks.longest;
-    dashboardData.currentStreak = streaks.current;
-    
-    // 5. Best records (heaviest weight, most reps, most sets)
-    const bestRecords = await getBestExerciseRecords(userId);
-    dashboardData.bestRecords = bestRecords;
-    
-    // 6. Monthly volume totals for the last 5 years
-    const volumeByYear = [];
-    
-    // Loop through the last 5 years (including current)
-    for (let yearOffset = 0; yearOffset < 5; yearOffset++) {
-      const year = currentYear - yearOffset;
-      const yearData = {
-        year,
-        months: await getMonthlyVolumeData(userId, year)
-      };
-      
-      volumeByYear.push(yearData);
-    }
-    
-    dashboardData.volumeByYear = volumeByYear;
-    
-    // Also include currentYear data separately for backward compatibility
-    dashboardData.monthlyVolume = volumeByYear[0].months;
-    
-    // 7. Top 3 most frequent exercises
-    const topExercises = await getTopExercises(userId, 3);
-    dashboardData.topExercises = topExercises;
-    
-    return dashboardData;
-  },
-  
-  // Get user's exercise history and progress over time
-  getExerciseProgress: async (userId, exerciseId) => {
-    // Validate exercise exists
-    const exercise = await prisma.exercise.findUnique({
-      where: { id: exerciseId }
-    });
-    
-    if (!exercise) {
-      throw new ApiError(404, 'Exercise not found');
-    }
-    
-    // Get all actual exercises for this exercise, sorted by date
-    const exerciseHistory = await prisma.actualExercise.findMany({
-      where: {
-        exerciseId,
-        actualWorkout: {
-          userId
-        }
-      },
-      include: {
-        actualWorkout: {
-          select: {
-            completedDate: true
-          }
-        }
-      },
-      orderBy: {
-        actualWorkout: {
-          completedDate: 'asc'
-        }
-      }
-    });
-    
-    // Transform into a format suitable for charting
-    const progressData = exerciseHistory.map(entry => ({
-      date: entry.actualWorkout.completedDate,
-      sets: entry.actualSets || 0,
-      reps: entry.actualReps || 0,
-      weight: entry.actualWeight || 0,
-      volume: calculateVolume(entry.actualSets, entry.actualReps, entry.actualWeight)
-    }));
-    
-    return {
-      exercise,
-      progressData
-    };
-  }
-};
-
 // Helper function to calculate volume
 function calculateVolume(sets, reps, weight) {
   if (!sets || !reps || !weight) return 0;
-  return sets * reps * weight;
-}
-
-// Helper function to calculate weekly streaks
-function calculateWeeklyStreaks(dates) {
-  if (dates.length === 0) {
-    return { longest: 0, current: 0 };
-  }
-  
-  // Group workout dates by week, using ISO week format for consistency
-  const weekMap = new Map();
-  
-  dates.forEach(date => {
-    // Get ISO week number (1-52/53)
-    const year = date.getFullYear();
-    const weekNum = getWeekNumber(date);
-    const weekKey = `${year}-W${weekNum}`;
-    
-    if (!weekMap.has(weekKey)) {
-      weekMap.set(weekKey, true);
-    }
-  });
-  
-  // Convert to array of week keys and sort
-  const weekKeys = Array.from(weekMap.keys()).sort();
-  
-  if (weekKeys.length === 0) {
-    return { longest: 0, current: 0 };
-  }
-  
-  // Debug: Print week keys
-  console.log(`Found ${weekKeys.length} unique workout weeks`);
-  
-  // Calculate streaks by looking for consecutive week numbers
-  let currentStreak = 1;
-  let maxStreak = 1;
-  let streaks = [{ start: weekKeys[0], length: 1 }];
-  
-  for (let i = 1; i < weekKeys.length; i++) {
-    const [prevYear, prevWeek] = parseWeekKey(weekKeys[i-1]);
-    const [currYear, currWeek] = parseWeekKey(weekKeys[i]);
-    
-    // Check if weeks are consecutive
-    const isConsecutive = 
-      (prevYear === currYear && currWeek - prevWeek === 1) || 
-      (currYear - prevYear === 1 && 
-       ((prevWeek === 52 && currWeek === 1) || (prevWeek === 53 && currWeek === 1)));
-    
-    if (isConsecutive) {
-      // Continue current streak
-      currentStreak++;
-      streaks[streaks.length - 1].length = currentStreak;
-    } else {
-      // Start new streak
-      currentStreak = 1;
-      streaks.push({ start: weekKeys[i], length: 1 });
-    }
-    
-    if (currentStreak > maxStreak) {
-      maxStreak = currentStreak;
-    }
-  }
-  
-  // Debug: Print all streaks
-  console.log("All streaks:", streaks.map(s => `${s.start} (${s.length} weeks)`).join(', '));
-  
-  // Find current streak by checking if the most recent week includes this week
-  const today = new Date();
-  const thisYear = today.getFullYear();
-  const thisWeek = getWeekNumber(today);
-  const thisWeekKey = `${thisYear}-W${thisWeek}`;
-  
-  // Find the last streak and check if it includes this week
-  const lastStreak = streaks[streaks.length - 1];
-  const [lastStreakYear, lastStreakWeek] = parseWeekKey(lastStreak.start);
-  const lastStreakEndWeek = lastStreakWeek + lastStreak.length - 1;
-  
-  let activeCurrentStreak = 0;
-  
-  // Check if the last workout was in the current week
-  if (weekMap.has(thisWeekKey)) {
-    // If we have a workout this week, the current streak includes this week
-    activeCurrentStreak = lastStreak.length;
-  } else {
-    // Check if the last workout was in the previous week
-    const lastDate = new Date(dates[dates.length - 1]);
-    const lastWorkoutYear = lastDate.getFullYear();
-    const lastWorkoutWeek = getWeekNumber(lastDate);
-    
-    // Debug: Print current streak information
-    console.log(`Current week: ${thisYear}-W${thisWeek}`);
-    console.log(`Last workout week: ${lastWorkoutYear}-W${lastWorkoutWeek}`);
-    
-    // Calculate weeks difference
-    const weeksDiff = getWeeksDifference(
-      lastWorkoutYear, lastWorkoutWeek,
-      thisYear, thisWeek
-    );
-    
-    console.log(`Weeks difference: ${weeksDiff}`);
-    
-    if (weeksDiff <= 1) {
-      // If last workout was in the previous week, streak is still active
-      activeCurrentStreak = lastStreak.length;
-    } else {
-      // Streak is broken - more than a week has passed
-      activeCurrentStreak = 0;
-    }
-  }
-  
-  return { longest: maxStreak, current: activeCurrentStreak };
+  // Ensure weight is a number for calculation
+  const numericWeight = typeof weight === 'number' ? weight : parseFloat(weight.toString());
+  if (isNaN(numericWeight)) return 0;
+  return (sets || 0) * (reps || 0) * numericWeight;
 }
 
 // Helper function to get ISO week number
@@ -316,7 +17,7 @@ function getWeekNumber(date) {
   const dayNum = d.getUTCDay() || 7;
   d.setUTCDate(d.getUTCDate() + 4 - dayNum);
   const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+  return Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
 }
 
 // Helper function to parse week key "YYYY-WXX" into [year, week]
@@ -327,170 +28,435 @@ function parseWeekKey(weekKey) {
 }
 
 // Helper function to calculate difference between two week numbers
+// This needs to be more robust for year changes.
 function getWeeksDifference(year1, week1, year2, week2) {
-  const weeks1 = year1 * 52 + week1;
-  const weeks2 = year2 * 52 + week2;
-  return Math.abs(weeks2 - weeks1);
+    // Create dates for the start of each week for easier comparison
+    // Monday of week1 in year1
+    const date1 = new Date(year1, 0, 1 + (week1 - 1) * 7);
+    while(date1.getDay() !== 1) { // 1 is Monday
+        date1.setDate(date1.getDate() -1);
+    }
+    // Monday of week2 in year2
+    const date2 = new Date(year2, 0, 1 + (week2 - 1) * 7);
+     while(date2.getDay() !== 1) {
+        date2.setDate(date2.getDate() -1);
+    }
+    const diffTime = Math.abs(date2.getTime() - date1.getTime());
+    const diffWeeks = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7));
+    return diffWeeks;
 }
 
-// Helper function to get best exercise records
-async function getBestExerciseRecords(userId) {
-  // Get all exercises with their stats
-  const exercises = await prisma.actualExercise.findMany({
+
+// Helper function to calculate weekly streaks
+function calculateWeeklyStreaks(dates) {
+  if (!dates || dates.length === 0) {
+    return { longest: 0, current: 0 };
+  }
+
+  const uniqueWorkoutWeeks = new Set();
+  dates.forEach(date => {
+    const year = date.getFullYear();
+    const weekNum = getWeekNumber(date);
+    uniqueWorkoutWeeks.add(`${year}-W${String(weekNum).padStart(2, '0')}`);
+  });
+
+  const sortedWorkoutWeeks = Array.from(uniqueWorkoutWeeks).sort();
+
+  if (sortedWorkoutWeeks.length === 0) {
+    return { longest: 0, current: 0 };
+  }
+
+  let longestStreak = 0;
+  let currentStreak = 0;
+  let lastWeekYear = 0;
+  let lastWeekNumber = 0;
+
+  sortedWorkoutWeeks.forEach(weekKey => {
+    const [year, weekNumber] = parseWeekKey(weekKey);
+
+    if (
+      currentStreak > 0 &&
+      (year === lastWeekYear && weekNumber === lastWeekNumber + 1) ||
+      (year === lastWeekYear + 1 && weekNumber === 1 && (lastWeekNumber === 52 || lastWeekNumber === 53))
+    ) {
+      currentStreak++;
+    } else {
+      currentStreak = 1; // Start a new streak
+    }
+
+    if (currentStreak > longestStreak) {
+      longestStreak = currentStreak;
+    }
+    lastWeekYear = year;
+    lastWeekNumber = weekNumber;
+  });
+
+  // Calculate current streak based on today
+  const today = new Date();
+  const currentYear = today.getFullYear();
+  const currentWeekNumber = getWeekNumber(today);
+  const currentWeekKey = `${currentYear}-W${String(currentWeekNumber).padStart(2, '0')}`;
+  const previousWeekKey = `${currentYear}-W${String(currentWeekNumber - 1).padStart(2, '0')}`; // Simplified, needs year boundary check
+
+  let actualCurrentStreak = 0;
+  if (sortedWorkoutWeeks.includes(currentWeekKey)) {
+    // User worked out this week, find the length of the streak ending this week
+    let tempStreak = 0;
+    for (let i = sortedWorkoutWeeks.length - 1; i >= 0; i--) {
+        const [year, week] = parseWeekKey(sortedWorkoutWeeks[i]);
+        if (i === sortedWorkoutWeeks.length -1 ||
+            (year === parseWeekKey(sortedWorkoutWeeks[i+1])[0] && week === parseWeekKey(sortedWorkoutWeeks[i+1])[1] -1) ||
+            (year === parseWeekKey(sortedWorkoutWeeks[i+1])[0] -1 && week >= 52 && parseWeekKey(sortedWorkoutWeeks[i+1])[1] === 1)
+        ) {
+            tempStreak++;
+        } else {
+            break;
+        }
+    }
+    actualCurrentStreak = tempStreak;
+
+  } else if (sortedWorkoutWeeks.includes(previousWeekKey)) {
+    // User worked out last week but not this week, find the length of the streak ending last week
+     let tempStreak = 0;
+    for (let i = sortedWorkoutWeeks.length - 1; i >= 0; i--) {
+        if (sortedWorkoutWeeks[i] === previousWeekKey) { // Start counting from previous week
+             tempStreak = 1; // Reset and start from this point
+             for (let j = i -1; j >=0; j--) { // Look backwards from previousWeekKey
+                const [year, week] = parseWeekKey(sortedWorkoutWeeks[j]);
+                const [prevYearStreak, prevWeekStreak] = parseWeekKey(sortedWorkoutWeeks[j+1]);
+                 if (
+                    (year === prevYearStreak && week === prevWeekStreak - 1) ||
+                    (year === prevYearStreak - 1 && week >= 52 && prevWeekStreak === 1)
+                ) {
+                    tempStreak++;
+                } else {
+                    break;
+                }
+             }
+             break; // Found the streak ending last week
+        }
+    }
+    actualCurrentStreak = tempStreak;
+  }
+  // If neither this week nor last week had a workout, current streak is 0.
+
+  return { longest: longestStreak, current: actualCurrentStreak };
+}
+
+
+// Optimized helper for monthly workout counts
+async function getMonthlyWorkoutCountsForPeriod(userId, startDate, endDate) {
+  const workouts = await prisma.actualWorkout.findMany({
+    where: {
+      userId,
+      completedDate: {
+        gte: startDate,
+        lte: endDate,
+      },
+    },
+    select: {
+      completedDate: true,
+    },
+  });
+
+  const monthlyCounts = {};
+  workouts.forEach(workout => {
+    const year = workout.completedDate.getFullYear();
+    const month = workout.completedDate.getMonth(); // 0-11
+    const key = `${year}-${month}`;
+    monthlyCounts[key] = (monthlyCounts[key] || 0) + 1;
+  });
+  return monthlyCounts;
+}
+
+// Optimized helper for monthly volume
+async function getMonthlyVolumeForPeriod(userId, startDate, endDate) {
+  const exercisesInPeriod = await prisma.actualExercise.findMany({
     where: {
       actualWorkout: {
-        userId
-      }
+        userId,
+        completedDate: {
+          gte: startDate,
+          lte: endDate,
+        },
+      },
     },
-    include: {
-      exercise: {
-        select: {
-          id: true,
-          name: true
-        }
-      }
+    select: {
+      actualSets: true,
+      actualReps: true,
+      actualWeight: true,
+      actualWorkout: { // Need to select this to access completedDate
+        select: { completedDate: true },
+      },
+    },
+  });
+
+  const monthlyVolumes = {};
+  exercisesInPeriod.forEach(ex => {
+    if (ex.actualWorkout && ex.actualWorkout.completedDate) { // Ensure actualWorkout and completedDate exist
+      const year = ex.actualWorkout.completedDate.getFullYear();
+      const month = ex.actualWorkout.completedDate.getMonth(); // 0-11
+      const key = `${year}-${month}`;
+      monthlyVolumes[key] = (monthlyVolumes[key] || 0) + calculateVolume(ex.actualSets, ex.actualReps, ex.actualWeight);
     }
   });
-  
-  // Find records
-  let heaviestWeight = { weight: 0, exercise: null };
-  let mostReps = { reps: 0, exercise: null };
-  let mostSets = { sets: 0, exercise: null };
-  
-  exercises.forEach(ex => {
-    // Convert Decimal to Number for comparison
-    const weight = ex.actualWeight ? parseFloat(ex.actualWeight.toString()) : 0;
-    
-    // Heaviest weight
-    if (weight > parseFloat(heaviestWeight.weight.toString() || '0')) {
-      heaviestWeight = {
-        weight: ex.actualWeight,
-        exercise: ex.exercise
-      };
-    }
-    
-    // Most reps
-    if (ex.actualReps && ex.actualReps > mostReps.reps) {
-      mostReps = {
-        reps: ex.actualReps,
-        exercise: ex.exercise
-      };
-    }
-    
-    // Most sets
-    if (ex.actualSets && ex.actualSets > mostSets.sets) {
-      mostSets = {
-        sets: ex.actualSets,
-        exercise: ex.exercise
-      };
-    }
-  });
-  
-  return {
-    heaviestWeight,
-    mostReps,
-    mostSets
-  };
+  return monthlyVolumes;
 }
 
-// Helper function to get monthly volume data
-async function getMonthlyVolumeData(userId, year) {
-  const volumeData = [];
-  const currentDate = new Date();
-  
-  for (let month = 0; month < 12; month++) {
-    const startDate = new Date(year, month, 1);
-    const endDate = new Date(year, month + 1, 0);
-    
-    // Skip future months
-    if (startDate > currentDate) {
-      volumeData.push({
-        month: month + 1,
-        monthName: new Date(year, month, 1).toLocaleString('default', { month: 'long' }),
-        volume: 0
-      });
-      continue;
+// Helper function to process best records from pre-fetched data
+function processBestExerciseRecords(allActualExercises) {
+  let heaviestWeight = { weight: 0, exercise: null, date: null };
+  let mostReps = { reps: 0, exercise: null, date: null };
+  let mostSets = { sets: 0, exercise: null, date: null };
+
+  allActualExercises.forEach(ex => {
+    const weight = ex.actualWeight ? parseFloat(ex.actualWeight.toString()) : 0;
+    // Ensure actualWorkout and completedDate are available if you need the date
+    const workoutDate = ex.actualWorkout?.completedDate;
+
+    if (weight > parseFloat(heaviestWeight.weight?.toString() || '0')) {
+      heaviestWeight = { weight: ex.actualWeight, exercise: ex.exercise, date: workoutDate };
     }
-    
-    // Get all exercises in this month
-    const exercises = await prisma.actualExercise.findMany({
-      where: {
-        actualWorkout: {
-          userId,
-          completedDate: {
-            gte: startDate,
-            lte: endDate
-          }
-        }
-      },
-      select: {
-        actualSets: true,
-        actualReps: true,
-        actualWeight: true
-      }
-    });
-    
-    // Calculate total volume for month
-    let totalVolume = 0;
-    exercises.forEach(ex => {
-      totalVolume += calculateVolume(ex.actualSets, ex.actualReps, ex.actualWeight);
-    });
-    
-    volumeData.push({
-      month: month + 1,
-      monthName: new Date(year, month, 1).toLocaleString('default', { month: 'long' }),
-      volume: totalVolume
-    });
-  }
-  
-  return volumeData;
+    if (ex.actualReps && ex.actualReps > mostReps.reps) {
+      mostReps = { reps: ex.actualReps, exercise: ex.exercise, date: workoutDate };
+    }
+    if (ex.actualSets && ex.actualSets > mostSets.sets) {
+      mostSets = { sets: ex.actualSets, exercise: ex.exercise, date: workoutDate };
+    }
+  });
+  return { heaviestWeight, mostReps, mostSets };
 }
 
 // Helper function to get top most frequent exercises
 async function getTopExercises(userId, limit) {
-  // Get count of each exercise used
   const exerciseCounts = await prisma.actualExercise.groupBy({
     by: ['exerciseId'],
     where: {
       actualWorkout: {
-        userId
-      }
+        userId,
+      },
     },
     _count: {
-      exerciseId: true
-    }
+      exerciseId: true,
+    },
+    orderBy: {
+      _count: {
+        exerciseId: 'desc',
+      },
+    },
+    take: limit,
   });
-  
-  // Sort by count descending
-  exerciseCounts.sort((a, b) => b._count.exerciseId - a._count.exerciseId);
-  
-  // Get top N exercises
-  const topExerciseIds = exerciseCounts.slice(0, limit).map(e => e.exerciseId);
-  
-  if (topExerciseIds.length === 0) {
+
+  if (exerciseCounts.length === 0) {
     return [];
   }
-  
-  // Get exercise details
-  const topExercises = await prisma.exercise.findMany({
+
+  const topExerciseIds = exerciseCounts.map((e) => e.exerciseId);
+
+  const topExercisesDetails = await prisma.exercise.findMany({
     where: {
       id: {
-        in: topExerciseIds
-      }
-    }
+        in: topExerciseIds,
+      },
+    },
+    select: { id: true, name: true, category: true, imageUrl: true }, // Added imageUrl
   });
-  
-  // Map count to exercises and sort
-  return topExerciseIds.map(id => {
-    const exercise = topExercises.find(e => e.id === id);
-    const count = exerciseCounts.find(e => e.exerciseId === id)._count.exerciseId;
+
+  // Map counts to details and maintain the order from groupBy
+  return exerciseCounts.map((ec) => {
+    const detail = topExercisesDetails.find((ted) => ted.id === ec.exerciseId);
     return {
-      id: exercise.id,
-      name: exercise.name,
-      category: exercise.category,
-      count
+      ...detail,
+      count: ec._count.exerciseId,
     };
   });
 }
+
+
+const statisticsService = {
+  getDashboardStatistics: async (userId) => {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const firstDayOfCurrentMonth = new Date(currentYear, currentDate.getMonth(), 1);
+    const lastDayOfCurrentMonth = new Date(currentYear, currentDate.getMonth() + 1, 0, 23, 59, 59, 999);
+    const fiveYearsAgoStart = new Date(currentYear - 4, 0, 1); // Start of 5 years ago (e.g., if 2025, then 2021-01-01)
+
+    const [
+      completedWorkoutSessionsCount,
+      plannedWorkoutsThisMonthCount,
+      completedPlannedWorkoutsThisMonthCount,
+      allWorkoutDatesForStreaks,
+      allActualExercisesForBestRecordsAndVolume, // Combined fetch for best records and part of volume
+      monthlyWorkoutCountsData,
+      topExercisesData,
+    ] = await Promise.all([
+      prisma.actualWorkout.count({ where: { userId } }),
+      prisma.plannedWorkout.count({
+        where: {
+          userId,
+          scheduledDate: {
+            gte: firstDayOfCurrentMonth,
+            lte: lastDayOfCurrentMonth,
+          },
+        },
+      }),
+      prisma.actualWorkout.count({
+        where: {
+          userId,
+          plannedId: { not: null },
+          completedDate: {
+            gte: firstDayOfCurrentMonth,
+            lte: lastDayOfCurrentMonth,
+          },
+        },
+      }),
+      prisma.actualWorkout.findMany({
+        where: { userId },
+        select: { completedDate: true },
+        orderBy: { completedDate: 'asc' },
+      }),
+      prisma.actualExercise.findMany({ // For Best Records and Monthly Volume
+        where: { actualWorkout: { 
+            userId,
+            completedDate: { // For volume calculation over 5 years
+                gte: fiveYearsAgoStart,
+                lte: currentDate,
+            }
+        }},
+        include: {
+          exercise: { select: { id: true, name: true } },
+          actualWorkout: { select: { completedDate: true } }, // Needed for date of best record and volume month
+        },
+      }),
+      getMonthlyWorkoutCountsForPeriod(userId, fiveYearsAgoStart, currentDate),
+      getTopExercises(userId, 3),
+    ]);
+
+    const dashboardData = {};
+    dashboardData.completedWorkoutSessions = completedWorkoutSessionsCount;
+
+    dashboardData.currentMonthCompletionRate =
+      plannedWorkoutsThisMonthCount > 0
+        ? Math.min(100, (completedPlannedWorkoutsThisMonthCount / plannedWorkoutsThisMonthCount) * 100)
+        : 0;
+
+    const workoutsByYear = [];
+    for (let yearOffset = 0; yearOffset < 5; yearOffset++) {
+      const year = currentYear - yearOffset;
+      const yearEntry = { year, months: [] };
+      for (let month = 0; month < 12; month++) { // month is 0-11
+        const key = `${year}-${month}`;
+        // Skip future months in current year for display
+        if (year === currentYear && month > currentDate.getMonth()) {
+             yearEntry.months.push({
+                month: month + 1,
+                monthName: new Date(year, month, 1).toLocaleString('default', { month: 'long' }),
+                count: 0,
+            });
+        } else {
+            yearEntry.months.push({
+                month: month + 1,
+                monthName: new Date(year, month, 1).toLocaleString('default', { month: 'long' }),
+                count: monthlyWorkoutCountsData[key] || 0,
+            });
+        }
+      }
+      workoutsByYear.push(yearEntry);
+    }
+    dashboardData.workoutsByYear = workoutsByYear;
+    dashboardData.monthlyCompletedWorkouts = workoutsByYear.find(y => y.year === currentYear)?.months || [];
+
+    const streaks = calculateWeeklyStreaks(allWorkoutDatesForStreaks.map(w => w.completedDate));
+    dashboardData.longestStreak = streaks.longest;
+    dashboardData.currentStreak = streaks.current;
+    
+    // Process Best Records from the combined fetch
+    dashboardData.bestRecords = processBestExerciseRecords(allActualExercisesForBestRecordsAndVolume);
+
+    // Process Monthly Volume from the combined fetch
+    const monthlyVolumeMap = {};
+    allActualExercisesForBestRecordsAndVolume.forEach(ex => { // Reusing the fetched data
+        if (ex.actualWorkout && ex.actualWorkout.completedDate) {
+            const year = ex.actualWorkout.completedDate.getFullYear();
+            const month = ex.actualWorkout.completedDate.getMonth(); // 0-11
+            const key = `${year}-${month}`;
+            monthlyVolumeMap[key] = (monthlyVolumeMap[key] || 0) + calculateVolume(ex.actualSets, ex.actualReps, ex.actualWeight);
+        }
+    });
+
+    const volumeByYearProcessed = [];
+    for (let yearOffset = 0; yearOffset < 5; yearOffset++) {
+      const year = currentYear - yearOffset;
+      const yearEntry = { year, months: [] };
+      for (let month = 0; month < 12; month++) {
+        const key = `${year}-${month}`;
+         if (year === currentYear && month > currentDate.getMonth()) {
+            yearEntry.months.push({
+                month: month + 1,
+                monthName: new Date(year, month, 1).toLocaleString('default', { month: 'long' }),
+                volume: 0,
+            });
+        } else {
+            yearEntry.months.push({
+                month: month + 1,
+                monthName: new Date(year, month, 1).toLocaleString('default', { month: 'long' }),
+                volume: monthlyVolumeMap[key] || 0,
+            });
+        }
+      }
+      volumeByYearProcessed.push(yearEntry);
+    }
+    dashboardData.volumeByYear = volumeByYearProcessed;
+    dashboardData.monthlyVolume = volumeByYearProcessed.find(y => y.year === currentYear)?.months || [];
+
+    dashboardData.topExercises = topExercisesData;
+
+    return dashboardData;
+  },
+
+  getExerciseProgress: async (userId, exerciseId) => {
+    const exercise = await prisma.exercise.findUnique({
+      where: { id: exerciseId },
+    });
+
+    if (!exercise) {
+      throw new ApiError(404, 'Exercise not found');
+    }
+
+    const exerciseHistory = await prisma.actualExercise.findMany({
+      where: {
+        exerciseId,
+        actualWorkout: {
+          userId,
+        },
+      },
+      include: {
+        actualWorkout: {
+          select: {
+            completedDate: true,
+          },
+        },
+      },
+      orderBy: {
+        actualWorkout: {
+          completedDate: 'asc',
+        },
+      },
+    });
+
+    const progressData = exerciseHistory.map((entry) => ({
+      date: entry.actualWorkout.completedDate,
+      sets: entry.actualSets || 0,
+      reps: entry.actualReps || 0,
+      weight: entry.actualWeight ? parseFloat(entry.actualWeight.toString()) : 0,
+      volume: calculateVolume(entry.actualSets, entry.actualReps, entry.actualWeight),
+    }));
+
+    return {
+      exercise,
+      progressData,
+    };
+  },
+};
 
 module.exports = { statisticsService };

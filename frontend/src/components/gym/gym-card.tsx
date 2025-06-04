@@ -29,7 +29,12 @@ const GymCard: FC<GymCardProps> = ({ gym }) => {
         <div className="aspect-square relative w-full overflow-hidden rounded-lg">
           {gym.imageUrl && (
             <Image
-              src={`http://localhost:5000${gym.imageUrl}`}
+              // src={`http://localhost:5000${gym.imageUrl}`}
+              src={
+                gym.imageUrl.startsWith('http')
+                  ? gym.imageUrl
+                  : `http://localhost:5000${gym.imageUrl}`
+              }
               alt={gym.name}
               fill
               className="object-cover"
