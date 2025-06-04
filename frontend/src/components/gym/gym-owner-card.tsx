@@ -21,8 +21,9 @@ const GymOwnerCard: FC<GymOwnerCardProps> = ({ gym, onEdit, onDelete }) => (
   <Card className="w-full border-0 shadow-none flex flex-col">
     <div className="aspect-square relative w-full overflow-hidden rounded-lg">
     {gym.imageUrl && (
-        <Image
+        <img
             src={gym.imageUrl}
+            
             alt={gym.name}
             className="w-full h-48 object-cover rounded-xl"
         />

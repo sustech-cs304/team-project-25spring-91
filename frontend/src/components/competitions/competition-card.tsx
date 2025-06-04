@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Calendar, MapPin, Trophy, Target, AlertCircle } from "lucide-react";
 import { Competition, UserCompetition } from "@/types/competition";
-import Image from "next/image";
 
 interface CompetitionCardProps {
   competition: Competition | UserCompetition;
@@ -61,7 +60,7 @@ export const CompetitionCard: React.FC<CompetitionCardProps> = ({
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
       <div className="relative">
-        <Image
+        <img
           src={`http://localhost:5000${comp.imageUrl}`|| "/api/placeholder/400/200"}
           alt={comp.name}
           className="w-full h-48 object-cover"

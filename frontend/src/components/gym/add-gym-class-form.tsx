@@ -269,6 +269,7 @@ return (
                         <div className="relative">
                             <img
                                 src={imagePreview}
+                                
                                 alt="Preview"
                                 className="w-full h-32 object-cover rounded"
                             />

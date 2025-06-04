@@ -296,10 +296,10 @@ const CompetitionsPage = () => {
                                             {/* Image Section */}
                                             <div className="aspect-video relative overflow-hidden rounded-t-lg flex-shrink-0">
                                                 {competition.imageUrl ? (
-                                                    <Image
+                                                    <img
                                                         src={`http://localhost:5000${competition.imageUrl}`}
                                                         alt={competition.name}
-                                                        fill
+                                                        
                                                         className="object-cover"
                                                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                                     />

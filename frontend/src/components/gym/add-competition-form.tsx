@@ -484,8 +484,9 @@ const AddCompetitionForm = ({ gym, onClose }: AddCompetitionFormProps) => {
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
               {imagePreview ? (
                 <div className="relative">
-                  <Image
+                  <img
                     src={imagePreview}
+                    
                     alt="Preview"
                     className="w-full h-32 object-cover rounded"
                   />

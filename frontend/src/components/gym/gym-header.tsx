@@ -2,7 +2,6 @@
 "use client"
 
 import { MapPin, Clock, Phone } from 'lucide-react'
-import Image from 'next/image'
 import type { Gym } from '@/types/gym'
 
 interface GymHeaderProps {
@@ -13,12 +12,10 @@ export function GymHeader({ gym }: GymHeaderProps) {
   return (
     <div className="relative w-full">
       <div className="relative h-[300px] w-full overflow-hidden">
-        <Image
+        <img
           src={`http://localhost:5000${gym.imageUrl}`}
           alt={gym.name}
-          fill
           className="object-cover"
-          priority
         />
         <div className="absolute inset-0 bg-black/30" />
       </div>

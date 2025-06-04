@@ -26,7 +26,6 @@ import {
     Plus,
     Building2
 } from 'lucide-react'
-import Image from 'next/image'
 import { toast } from 'sonner'
 import api from '@/lib/api'
 import { Gym } from '@/types/gym'
@@ -260,10 +259,9 @@ const handleDeleteClass = async (classId: number) => {
                                         {/* Image Section */}
                                         <div className="aspect-video relative overflow-hidden rounded-t-lg flex-shrink-0">
                                             {gymClass.imageUrl ? (
-                                                <Image
+                                                <img
                                                     src={`http://localhost:5000${gymClass.imageUrl}`}
                                                     alt={gymClass.name}
-                                                    fill
                                                     className="object-cover"
                                                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                                 />

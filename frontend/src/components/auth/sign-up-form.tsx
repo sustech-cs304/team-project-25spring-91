@@ -62,8 +62,8 @@ export function SignUpForm() {
         description: "Welcome! Your account has been created." 
       });
 
-      // router.push('/dashboard/statistics');
-      router.push('/dashboard');
+      router.push('/dashboard/statistics');
+      // router.push('/dashboard');
 
     } catch (error) {
       let errorMessage = 'Failed to sign up';

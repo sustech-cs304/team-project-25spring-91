@@ -225,7 +225,7 @@ export default function CreateGymPage() {
             <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 bg-muted/20 hover:bg-muted/30 transition-colors">
               {imagePreview ? (
                 <div className="relative max-w-2xl mx-auto">
-                  <Image
+                  <img
                     src={imagePreview}
                     alt="Gym preview"
                     className="w-full h-80 object-cover rounded-lg"

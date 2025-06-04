@@ -33,8 +33,9 @@ const PreviewDialog = ({
       return (
         <div className="space-y-4">
           {data.imagePreview && (
-            <Image
+            <img
               src={data.imagePreview}
+              
               alt="Preview"
               className="w-full h-48 object-cover rounded"
             />
@@ -60,9 +61,10 @@ const PreviewDialog = ({
       return (
         <div className="space-y-4">
           {data.imagePreview && (
-            <Image
+            <img
               src={data.imagePreview}
               alt="Preview"
+              
               className="w-full h-48 object-cover rounded"
             />
           )}
@@ -95,9 +97,10 @@ const PreviewDialog = ({
       return (
         <div className="space-y-4">
           {data.imagePreview && (
-            <Image
+            <img
               src={data.imagePreview}
               alt="Preview"
+              
               className="w-full h-48 object-cover rounded"
             />
           )}
