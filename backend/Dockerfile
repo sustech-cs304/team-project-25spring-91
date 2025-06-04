@@ -2,7 +2,7 @@
 FROM --platform=linux/amd64 node:18-slim AS builder
 WORKDIR /app
 
-# Install system dependencies (only need these for sharp)
+# Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libvips-dev \
     build-essential \
@@ -11,7 +11,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY package.json package-lock.json ./
 
-# Simple clean install - no need for separate prod/dev installs
 RUN npm ci
 
 COPY . .
