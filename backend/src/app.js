@@ -114,6 +114,17 @@ app.use(
   })
 );
 
+app.use('/api/uploads', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Cross-Origin-Resource-Policy', 'cross-origin');
+  res.header('Access-Control-Allow-Methods', 'GET');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
+
+// Then your static file serving
+app.use('/api/uploads', express.static('uploads'));
+
 if (process.env.NODE_ENV !== 'test') {
   const passport = setupOAuth();
   app.use(passport.initialize());
@@ -137,6 +148,8 @@ app.use('/api/diet', authMiddleware, dietEntryRoutes);
 app.use('/api/ai', authMiddleware, aiRoutes);
 app.use('/api/uploads', authMiddleware, uploadRoutes);
 app.use('/api/stripe', authMiddleware, stripeRoutes);
+
+
 
 app.use((req, res, next) => {
   const error = new Error(`Not Found - ${req.originalUrl}`);
