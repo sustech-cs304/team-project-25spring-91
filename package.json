@@ -5,6 +5,10 @@
   "scripts": {
     "build:backend": "cd backend && npm ci && npx prisma generate && npm run test:ci",
     "build:frontend": "cd frontend && npm ci && npm run build",
-    "build": "npm run build:backend && npm run build:frontend"
+    "build": "npm run build:backend && npm run build:frontend",
+    "start": "concurrently \"cd backend && npm run start\" \"cd frontend && npm run start\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
   }
 }
