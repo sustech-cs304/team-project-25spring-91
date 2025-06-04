@@ -6,6 +6,19 @@ const { cleanupImageOnError } = require('./upload');
 const errorHandler = async (err, req, res, next) => {
   console.error(err);
 
+  // Add CORS headers to error responses
+  const allowedOrigins = [
+    'http://localhost:3000',
+    'http://localhost:5000',
+    process.env.FRONTEND_URL,
+  ].filter(Boolean);
+
+  const origin = req.headers.origin;
+  if (origin && allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Credentials', 'true');
+  }
+
   // Clean up processed image if validation failed
   if (req.processedImage && (err.statusCode === 400 || err.name === 'ZodError')) {
     await cleanupImageOnError(req);
