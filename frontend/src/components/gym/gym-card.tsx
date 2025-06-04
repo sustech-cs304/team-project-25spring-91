@@ -31,12 +31,10 @@ const GymCard: FC<GymCardProps> = ({ gym }) => {
             <img
               // src={`http://localhost:5000${gym.imageUrl}`}
               src={
-                gym.imageUrl.startsWith('http')
-                  ? gym.imageUrl
-                  : `http://localhost:5000${gym.imageUrl}`
+                `${process.env.NEXT_PUBLIC_BACKEND_API_URL}${gym.imageUrl}`
               }
               alt={gym.name}
-              
+
               className="object-cover"
               sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
             />

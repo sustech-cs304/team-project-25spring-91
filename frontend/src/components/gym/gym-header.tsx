@@ -13,7 +13,7 @@ export function GymHeader({ gym }: GymHeaderProps) {
     <div className="relative w-full">
       <div className="relative h-[300px] w-full overflow-hidden">
         <img
-          src={`http://localhost:5000${gym.imageUrl}`}
+          src={`${process.env.NEXT_PUBLIC_BACKEND_API_URL}${gym.imageUrl}`}
           alt={gym.name}
           className="object-cover"
         />

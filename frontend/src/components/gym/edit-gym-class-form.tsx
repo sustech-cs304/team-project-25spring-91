@@ -53,7 +53,7 @@ const EditGymClassForm = ({ gym, gymClass, onClose }: EditGymClassFormProps) => 
     const [schedules, setSchedules] = useState<Schedule[]>([])
     const [imageFile, setImageFile] = useState<File | null>(null)
     const [imagePreview, setImagePreview] = useState<string>(
-        gymClass.imageUrl ? `http://localhost:5000${gymClass.imageUrl}` : ''
+        gymClass.imageUrl ? `${process.env.NEXT_PUBLIC_BACKEND_API_URL}${gymClass.imageUrl}` : ''
     )
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [showPreview, setShowPreview] = useState(false)

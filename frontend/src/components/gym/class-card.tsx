@@ -27,7 +27,7 @@ export function ClassCard({ gymClass }: ClassCardProps) {
       <Card className="border-0 shadow-none group flex h-[500px] flex-col overflow-hidden transition-all duration-300 hover:shadow-lg">
         <div className="relative h-48 w-full overflow-hidden">
           <img
-            src={`http://localhost:5000${gymClass.imageUrl}`}
+            src={`${process.env.NEXT_PUBLIC_BACKEND_API_URL}${gymClass.imageUrl}`}
             alt={gymClass.name}
             
             className="object-cover transition-transform duration-300 group-hover:scale-105"

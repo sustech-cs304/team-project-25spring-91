@@ -43,6 +43,26 @@ const nextConfig = {
         hostname: "example.com",
         pathname: "/images/**",
       },
+      {
+        protocol: "https",
+        hostname: "sustracker-backend-v2-0-1.onrender.com",
+        pathname: "/api/uploads/gyms/**",
+      },
+      {
+        protocol: "https",
+        hostname: "sustracker-backend-v2-0-1.onrender.com",
+        pathname: "/api/uploads/competitions/**",
+      },
+      {
+        protocol: "https",
+        hostname: "sustracker-backend-v2-0-1.onrender.com",
+        pathname: "/api/uploads/gym-classes/**",
+      },
+      {
+        protocol: "https",
+        hostname: "sustracker-backend-v2-0-1.onrender.com",
+        pathname: "/api/uploads/users/**",
+      },
     ],
   },
 };

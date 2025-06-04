@@ -73,7 +73,7 @@ export function UserMenu() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar>
-            <AvatarImage src={`http://localhost:5000${user.imageUrl}`} alt={user.displayName || 'User'} />
+            <AvatarImage src={`${process.env.NEXT_PUBLIC_BACKEND_API_URL}${user.imageUrl}`} alt={user.displayName || 'User'} />
             <AvatarFallback>{getInitials()}</AvatarFallback>
           </Avatar>
         </Button>

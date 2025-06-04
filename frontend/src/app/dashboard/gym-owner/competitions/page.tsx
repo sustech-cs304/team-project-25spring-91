@@ -297,7 +297,7 @@ const CompetitionsPage = () => {
                                             <div className="aspect-video relative overflow-hidden rounded-t-lg flex-shrink-0">
                                                 {competition.imageUrl ? (
                                                     <img
-                                                        src={`http://localhost:5000${competition.imageUrl}`}
+                                                        src={`${process.env.NEXT_PUBLIC_BACKEND_API_URL}${competition.imageUrl}`}
                                                         alt={competition.name}
                                                         
                                                         className="object-cover"

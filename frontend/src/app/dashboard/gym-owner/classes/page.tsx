@@ -260,7 +260,7 @@ const handleDeleteClass = async (classId: number) => {
                                         <div className="aspect-video relative overflow-hidden rounded-t-lg flex-shrink-0">
                                             {gymClass.imageUrl ? (
                                                 <img
-                                                    src={`http://localhost:5000${gymClass.imageUrl}`}
+                                                    src={`${process.env.NEXT_PUBLIC_BACKEND_API_URL}${gymClass.imageUrl}`}
                                                     alt={gymClass.name}
                                                     className="object-cover"
                                                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

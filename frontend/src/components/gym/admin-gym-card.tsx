@@ -32,7 +32,7 @@ const GymOwnerCard: FC<GymOwnerCardProps> = ({ gym }) => {
         <div className="aspect-square relative w-full overflow-hidden rounded-lg">
           {gym.imageUrl && (
             <img
-              src={`http://localhost:5000${gym.imageUrl}`}
+              src={`${process.env.NEXT_PUBLIC_BACKEND_API_URL}${gym.imageUrl}`}
               alt={gym.name}
               
               className="object-cover"
