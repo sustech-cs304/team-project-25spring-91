@@ -1,7 +1,8 @@
+// components/gym/class-card.tsx
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
+// import Image from 'next/image'; // Not used, can be removed if not planned
 import { Clock, Users, ChevronRight, Dumbbell } from 'lucide-react';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -17,9 +18,12 @@ export function ClassCard({ gymClass }: ClassCardProps) {
   const [scheduleOpen, setScheduleOpen] = useState(false);
 
   const difficultyColor = {
-    beginner: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100',
-    intermediate: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100',
-    advanced: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100'
+    beginner:
+      'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100',
+    intermediate:
+      'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100',
+    advanced:
+      'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100',
   }[gymClass.difficultyLevel];
 
   return (
@@ -29,8 +33,7 @@ export function ClassCard({ gymClass }: ClassCardProps) {
           <img
             src={`${process.env.NEXT_PUBLIC_BACKEND_API_URL}${gymClass.imageUrl}`}
             alt={gymClass.name}
-            
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
           <Badge
@@ -59,7 +62,7 @@ export function ClassCard({ gymClass }: ClassCardProps) {
               <Clock className="h-4 w-4" />
               <span>{gymClass.durationMinutes} mins</span>
             </div>
-            {gymClass.maxCapacity && (
+            {gymClass.maxCapacity != null && ( // Check for null or undefined
               <div className="flex items-center gap-1">
                 <Users className="h-4 w-4" />
                 <span>Max {gymClass.maxCapacity}</span>
