@@ -154,7 +154,7 @@ When you have made progress in a subtask, you can update your progress here by c
 
 You can also view your ranking in each competition from the leaderboard tab!
 
-![Example Image](./images/competition-6%201.png)
+![Example Image](./images/competition-6.png)
 
 
 ### Ask AI
@@ -257,7 +257,7 @@ As an administrator, you’ll have access to valuable data insights that help yo
 
 The **Analytics** section provides a clear overview of key platform metrics, including the total number of gyms, users, and gym owners. It also features a bar chart displaying user sign-up trends by month, offering valuable insights into platform growth over time.
 
-![Example Image](./images/admin-dashboard 1.png)
+![Example Image](./images/admin-dashboard%201.png)
 
 Below, the **User Table** lists detailed information about all registered accounts. You can easily filter users by role or search for specific entries using the built-in search bar, making it simple to manage and monitor user activity.
 
