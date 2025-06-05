@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">12.5% </span>
+                <span class="strong">75% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>3/24</span>
+                <span class='fraction'>18/24</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">66.66% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/6</span>
+                <span class='fraction'>4/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">80% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/5</span>
+                <span class='fraction'>4/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">12.5% </span>
+                <span class="strong">75% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>3/24</span>
+                <span class='fraction'>18/24</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -137,34 +137,34 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -189,35 +189,35 @@ const aiController = {
     });
   },
 &nbsp;
-  createInteraction: <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {
-    const userId = <span class="cstat-no" title="statement not covered" >req.user.id;</span>
-    const interaction = <span class="cstat-no" title="statement not covered" >await aiService.createInteraction(userId, req.body);</span>
-<span class="cstat-no" title="statement not covered" >    res.status(201).json({ status: 'success', message: 'AI interaction logged successfully', data: interaction });</span>
+  createInteraction: async (req, res) =&gt; {
+    const userId = req.user.id;
+    const interaction = await aiService.createInteraction(userId, req.body);
+    res.status(201).json({ status: 'success', message: 'AI interaction logged successfully', data: interaction });
   },
 &nbsp;
-  getUserInteractions: <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {
-    const userId = <span class="cstat-no" title="statement not covered" >req.user.id;</span>
-    const { page, limit, interactionType } = <span class="cstat-no" title="statement not covered" >req.query;</span>
-    const result = <span class="cstat-no" title="statement not covered" >await aiService.getUserInteractions(userId, {</span>
+  getUserInteractions: async (req, res) =&gt; {
+    const userId = req.user.id;
+    const { page, limit, interactionType } = req.query;
+    const result = await aiService.getUserInteractions(userId, {
       page: page ? parseInt(page) : undefined,
       limit: limit ? parseInt(limit) : undefined,
       interactionType,
     });
-<span class="cstat-no" title="statement not covered" >    res.status(200).json({ status: 'success', results: result.interactions.length, pagination: result.pagination, data: result.interactions });</span>
+    res.status(200).json({ status: 'success', results: result.interactions.length, pagination: result.pagination, data: result.interactions });
   },
 &nbsp;
-  getInteractionById: <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {
-    const userId = <span class="cstat-no" title="statement not covered" >req.user.id;</span>
-    const interactionId = <span class="cstat-no" title="statement not covered" >parseInt(req.params.id);</span>
-    const interaction = <span class="cstat-no" title="statement not covered" >await aiService.getInteractionById(userId, interactionId);</span>
-<span class="cstat-no" title="statement not covered" >    res.status(200).json({ status: 'success', data: interaction });</span>
+  getInteractionById: async (req, res) =&gt; {
+    const userId = req.user.id;
+    const interactionId = parseInt(req.params.id);
+    const interaction = await aiService.getInteractionById(userId, interactionId);
+    res.status(200).json({ status: 'success', data: interaction });
   },
 &nbsp;
-  deleteInteraction: <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {
-    const userId = <span class="cstat-no" title="statement not covered" >req.user.id;</span>
-    const interactionId = <span class="cstat-no" title="statement not covered" >parseInt(req.params.id);</span>
-<span class="cstat-no" title="statement not covered" >    await aiService.deleteInteraction(userId, interactionId);</span>
-<span class="cstat-no" title="statement not covered" >    res.status(200).json({ status: 'success', message: 'AI interaction deleted successfully' });</span>
+  deleteInteraction: async (req, res) =&gt; {
+    const userId = req.user.id;
+    const interactionId = parseInt(req.params.id);
+    await aiService.deleteInteraction(userId, interactionId);
+    res.status(200).json({ status: 'success', message: 'AI interaction deleted successfully' });
   },
 };
 &nbsp;
@@ -229,7 +229,7 @@ module.exports = { aiController };
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-06-05T00:31:37.082Z
+                at 2025-06-05T00:00:28.666Z
             </div>
         <script src="../prettify.js"></script>
         <script>

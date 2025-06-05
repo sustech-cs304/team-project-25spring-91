@@ -17,7 +17,7 @@ To measure the complexity of the project, we used four main metrics: **Lines of 
 ```bash  
 # Using npm (globally)  
 npm install -g cloc  
-```  
+```
 
 Then, from project's root directory:
 
@@ -43,7 +43,7 @@ For  frontend (TypeScript):
 cd frontend  
   
 npm install eslint typescript @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-complexity typescript-eslint --save-dev  
-```  
+```
 
 ### Step 2: Configure ESLint
 
@@ -59,7 +59,7 @@ module.exports = [
   pluginJs.configs.recommended,  
   {    languageOptions: {      ecmaVersion: "latest",      sourceType: "module",      globals: {  
         ...globals.node,      },    },    files: ["src/**/*.js"],    plugins: {      complexity: complexityPlugin,    },    rules: {      "complexity": ["warn", { "max": 1 }],      "no-unused-vars": "warn",    },  },];  
-```  
+```
 
 B. Frontend ESLint Configuration (frontend/eslint.config.mjs):
 
@@ -76,7 +76,7 @@ export default tseslint.config(
     },    plugins: {      complexity: complexityPlugin,    },    rules: {      "complexity": ["warn", { "max": 1 }],      "@typescript-eslint/no-unused-vars": "warn",   
     },  
   },);  
-```  
+```
 
 ### Step 3: Run ESLint and Generate JSON Output
 
@@ -84,14 +84,14 @@ For backend:
 
 ```bash  
 cd backendnpx eslint . --format json --output-file eslint-report-backend.json
-```  
+```
 
 For frontend:
 
 ```bash  
 cd frontend  
 npx eslint . --format json --output-file eslint-report-frontend.json  
-```  
+```
 
 ### Step 4: Script to Parse JSON and Sum Complexities
 
@@ -121,13 +121,13 @@ console.log(
   `Overall Project Cyclomatic Complexity: ${totalCyclomaticComplexity}`,);  
 console.log(  
   "--------------------------------------------------",);  
-```  
+```
 
 Run it from project root:
 
 ```bash  
 node calculate-total-complexity.js  
-```  
+```
 
 ### 3. Number of Dependencies
 
@@ -143,13 +143,13 @@ function countDependencies(projectPath, projectName) {
 console.log("Counting dependencies...");  
 countDependencies(path.join(__dirname, "frontend"), "Frontend");  
 countDependencies(path.join(__dirname, "backend"), "Backend");  
-```  
+```
 
 Run it from project root:
 
 ```bash  
 node countDeps.js
-```  
+```
 
 ### Results
 
@@ -166,7 +166,7 @@ CSS                              1             63            116            250
 -------------------------------------------------------------------------------  
 SUM:                           251           5117           2135          38509  
 -------------------------------------------------------------------------------  
-```  
+```
 
 ### Cyclomatic Complexity
 
@@ -177,7 +177,7 @@ Total cyclomatic complexity for frontend/eslint-report-frontend.json: 2296
 --------------------------------------------------  
 Overall Project Cyclomatic Complexity: 3215  
 --------------------------------------------------  
-```  
+```
 
 ### Number of Dependencies
 
@@ -191,7 +191,7 @@ Total Dependencies: 60
 Production Dependencies: 24  
 Development Dependencies: 8  
 Total Dependencies: 32  
-```  
+```
 
 # 2. Documentation
 
@@ -233,7 +233,7 @@ This document provides comprehensive details for developers to understand and ut
 6. [Middleware](#middleware)
 7. [Setup and Configuration](#setup-and-configuration)
 
----  
+---
 ## Overview
 
 The Workout Tracker API facilitates fitness-related functionalities for users, gym owners, and administrators. Key features include:
@@ -246,7 +246,7 @@ The Workout Tracker API facilitates fitness-related functionalities for users, g
 
 The API is secured with JWT-based authentication and role-based access control (`admin`, `gym_owner`, `user`). Most routes require authentication, and specific actions (e.g., creating exercises) are restricted to administrators or gym owners.
 
----  
+---
 ## Authentication
 
 The API uses JSON Web Tokens (JWT) for session management and supports OAuth for Google, GitHub, and Microsoft authentication. All protected routes require a valid JWT in the `Authorization` header as `Bearer <token>`.
@@ -266,12 +266,12 @@ The API uses JSON Web Tokens (JWT) for session management and supports OAuth for
 - `roleCheck`: Restricts access to specific roles (e.g., `admin`).
 - `ownershipCheck`: Ensures users can only manage resources they own (e.g., gyms for gym owners).
 
------  
+-----
 ## API Endpoints
 
 We have a total of 130 API endpoints. We write the documentation for every endpoint. Refer to this link for detail => [View the API Guide](./documents/WorkoutTrackerAPIDocumentation.markdown)
 
------  
+-----
 ## Data Models
 
 The API uses Prisma ORM with a PostgreSQL database. Below are the key models and their fields:
@@ -356,7 +356,7 @@ The API uses Prisma ORM with a PostgreSQL database. Below are the key models and
     - `id`, `userId`, `prompt`, `response`, `interactionType`, `createdAt`.
     - Relations: `user`.
 
----  
+---
 ## Error Handling
 
 The API uses a centralized error handler (`src/middleware/errorHandler.js`) to manage errors consistently. Common error responses include:
@@ -366,7 +366,7 @@ The API uses a centralized error handler (`src/middleware/errorHandler.js`) to m
   ```json  
   {  
     "status": "error",    "message": "Validation error",    "error": [      {        "path": "string",        "message": "string"      }    ]  }  
-    ```  
+  ```
 - **401**: Authentication required or invalid token.
 
 - **403**: Insufficient permissions (role or ownership).
@@ -379,7 +379,7 @@ The API uses a centralized error handler (`src/middleware/errorHandler.js`) to m
 
 Prisma-specific errors are handled for unique constraint violations (`P2002`) and record not found (`P2025`).
 
----  
+---
 ## Middleware
 
 - **authMiddleware** (`src/middleware/auth.js`): Verifies JWT and attaches user data.
@@ -388,7 +388,7 @@ Prisma-specific errors are handled for unique constraint violations (`P2002`) an
 - **validate** (`src/middleware/validate.js`): Validates request data using Zod schemas.
 - **upload/processImage** (`src/middleware/upload.js`): Handles image uploads and processing with Sharp, storing as WebP.
 
----  
+---
 ## Setup and Configuration
 
 - **Environment Variables**:
@@ -414,7 +414,7 @@ Prisma-specific errors are handled for unique constraint violations (`P2002`) an
   npm install  
   npx prisma migrate dev  node src/index.js  ```  
 
----  
+---
 
 This documentation provides a comprehensive guide for developers to understand and extend the Workout Tracker API. For further details, refer to the source code or contact the development team.
 
@@ -423,7 +423,7 @@ This documentation provides a comprehensive guide for developers to understand a
 
 This document provides an overview of the test suite for the Backend (“backend” package), including setup instructions, folder structure, and a summary of each test file’s purpose. All tests use **Jest** and **Supertest**, run against a separate test database configured in `tests/setup.js`.
 
----  
+---
 ## Table of Contents
 
 1. [Overview](#overview)
@@ -452,7 +452,7 @@ This document provides an overview of the test suite for the Backend (“backend
 8. [Coverage Configuration](#coverage-configuration)
 9. [Notes & Best Practices](#notes--best-practices)
 
----  
+---
 ## Overview
 
 The test suite verifies all RESTful API endpoints, covering:
@@ -464,7 +464,7 @@ The test suite verifies all RESTful API endpoints, covering:
 
 Tests run against a dedicated PostgreSQL database (`sustracker_test`) to avoid polluting development or production data.
 
----  
+---
 ## Prerequisites & Environment Variables
 
 Before running tests, ensure you have:
@@ -493,9 +493,9 @@ cd backend
   
 # Install dependencies  
 npm install  
-```  
+```
 
----  
+---
 ## Running the Tests
 
 All tests run via Jest (configured in `package.json`):
@@ -509,20 +509,20 @@ npm run test:watch
   
 # Collect coverage info  
 npm run test:coverage  
-```  
+```
 
 Under the hood, `npm test` invokes:
 
 ```bash  
 jest --runInBand --forceExit  
-```  
+```
 
 * `--runInBand`: run tests serially (important when sharing a database)
 * `--forceExit`: ensures Jest exits even if open handles remain
 
 By default, Jest uses `tests/setup.js` as `setupFilesAfterEnv`.
 
----  
+---
 ## Test Directory Structure
 
 ```  
@@ -550,13 +550,13 @@ backend/
 │   └── users.test.js  
 ├── package.json  
 └── ...  
-```  
+```
 
 * **`tests/setup.js`**: Global setup/teardown hooks, database cleaning, and seed data creation.
 * **`tests/utils/auth.js`**: JWT token generator and helper for Supertest.
 * Each `*.test.js` file focuses on one resource or set of related endpoints.
 
----  
+---
 ## Global Setup & Teardown (`tests/setup.js`)
 
 1. **Environment Configuration**
@@ -592,14 +592,14 @@ backend/
     * `global.testUsers`: Object with `{ admin, gymOwner, user }`
     * `global.testExercises`: Object with `{ pushup, squat, running }`
 
----  
+---
 ## Test Files Breakdown
 
 Below is a summary of each test file’s responsibilities and notable test cases.
 
 Since we have a total of 254 test cases, for each test case explanation, refer to this link => [View Testing Guide](./documents/TestingDocumentation.md)
 
----  
+---
 ### Utilities (`utils/auth.js`)
 
 * **Purpose**: Helper functions for generating JWT tokens and authorization headers used in Supertest calls.
@@ -614,7 +614,7 @@ Since we have a total of 254 test cases, for each test case explanation, refer t
   ```js  
   const { getAuthHeader } = require('./utils/auth');  
   const tokenHeader = getAuthHeader(global.testUsers.user);  // e.g. .set('Authorization', tokenHeader)  ```  
----  
+---
 
 ## Coverage Configuration
 
@@ -626,7 +626,7 @@ In `package.json`, the `"jest"` section includes:
 "coverageDirectory": "coverage",  
 "coverageReporters": [  
   "text",  "lcov",  "html"]  
-```  
+```
 
 * **Files Covered**: All source files under `src/`, excluding entry points, config files, and upload middleware.
 * Coverage reports are generated in `coverage/` (HTML, LCOV, and plain text).
@@ -635,11 +635,11 @@ Run:
 
 ```bash  
 npm run test:coverage
-```  
+```
 
 to produce a detailed coverage report.
 
----  
+---
 ## Notes & Best Practices
 
 * **Isolation Between Tests**:
@@ -677,7 +677,7 @@ to produce a detailed coverage report.
     * `--runInBand` ensures tests run serially to prevent race conditions on the shared test database.
     * Avoid any hardcoded primary keys—always capture IDs from Prisma responses.
 
----  
+---
 ## Effectiveness of our tests
 
 ![Example Image](./images/coloredTest.png)
@@ -792,7 +792,7 @@ Notably, several files, including dietEntry.controller.js, exercises.controller.
 
 This coverage suggests that the tests are well-designed to verify the core functionality of the application, providing confidence in the reliability of the codebase while identifying areas for potential enhancement in future testing efforts.
 
------  
+-----
 # 4. Build
 
 ## Build Process Report
@@ -850,24 +850,22 @@ The build process encompasses several tasks to ensure a robust and production-re
 A successful build produces the following artifacts:
 
 - **Backend**:
-
     - **Prisma Client**: Generated client code in backend/node_modules/@prisma/client, used for database operations.
     - **Test Coverage Reports**: Located in backend/coverage, including:
         - text: A text-based summary of test coverage.
         - lcov: An LCOV file for integration with CI tools.
         - html: An HTML report for detailed coverage analysis.
     - **Executable Code**: The backend source code in backend/src is ready to run with node src/index.js, though no additional compilation is required as it uses CommonJS.
-
+    
 - **Frontend**:
-
-    - **Next.js Build Output**: The .next directory in frontend, containing:
-
-        - Compiled JavaScript bundles.
+- **Next.js Build Output**: The .next directory in frontend, containing:
+    
+    - Compiled JavaScript bundles.
         - Optimized static assets (e.g., CSS, images).
         - Server-side rendering configurations.
         - Static HTML pages for static site generation (if applicable).
-
-    - **TypeScript Artifacts**: Compiled JavaScript files from TypeScript source code, included in the .next directory.
+    
+- **TypeScript Artifacts**: Compiled JavaScript files from TypeScript source code, included in the .next directory.
 
 
 
@@ -878,27 +876,188 @@ The build process is driven by the following package.json files, which define th
 1. **Root package.json**:
     - Coordinates the build process for both backend and frontend.
     - Defines the build, build:backend, and build:frontend scripts.
+    - Defines the start: the backend and frontend build file are run simultaneously using concurrently library.
 
 ```json  
-{  
-  "name": "fullstack-project",  "version": "1.0.0",  "private": true,  "scripts": {    "build:backend": "cd backend && npm ci && npx prisma generate && npm run test:ci",    "build:frontend": "cd frontend && npm ci && npm run build",    "build": "npm run build:backend && npm run build:frontend"  }}  
-```  
+{
+  "name": "fullstack-project",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build:backend": "cd backend && npm ci && npx prisma generate",
+    "build:frontend": "cd frontend && npm ci && npm run build",
+    "build": "npm run build:backend && npm run build:frontend",
+    "start": "concurrently \"cd backend && npm run start\" \"cd frontend && npm run start\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
+
+```
 
 2. Backend package.json:
 
    ```json  
-   {  
-     "name": "backend",     "version": "1.0.0",     "description": "",     "main": "index.js",     "scripts": {       "dev": "nodemon src/index.js",       "start": "node src/index.js",       "test": "jest --runInBand --forceExit",       "test:watch": "jest --watch --runInBand",       "test:coverage": "jest --coverage --runInBand --forceExit",       "test:ci": "jest --coverage --watchAll=false --runInBand --forceExit"     },     "jest": {       "testEnvironment": "node",       "setupFilesAfterEnv": [         "<rootDir>/tests/setup.js"       ],       "testMatch": [         "<rootDir>/tests/**/*.test.js"       ],       "collectCoverageFrom": [         "src/**/*.js",         "!src/index.js",         "!src/app.js",         "!src/config/**",         "!src/middleware/upload.js"       ],       "coverageDirectory": "coverage",       "coverageReporters": [         "text",         "lcov",         "html"       ],       "testTimeout": 30000     },     "prisma": {       "seed": "node prisma/seed.js"     },     "keywords": [],     "author": "",     "license": "ISC",     "type": "commonjs",     "dependencies": {       "@prisma/client": "^6.5.0",       "@supabase/supabase-js": "^2.49.3",       "bcrypt": "^5.1.1",       "cookie-parser": "^1.4.7",       "cors": "^2.8.5",       "dotenv": "^16.4.7",       "express": "^4.21.2",       "express-session": "^1.18.1",       "firebase-admin": "^13.2.0",       "helmet": "^8.1.0",       "jsonwebtoken": "^9.0.2",       "multer": "^2.0.0",       "node-cron": "^3.0.3",       "nodemailer": "^6.10.0",       "openai": "^5.0.1",       "passport": "^0.7.0",       "passport-facebook": "^3.0.0",       "passport-github2": "^0.1.12",       "passport-google-oauth20": "^2.0.0",       "passport-microsoft": "^2.1.0",       "sharp": "^0.34.2",       "stripe": "^18.1.0",       "uuid": "^11.1.0",       "zod": "^3.24.2"     },     "devDependencies": {       "@types/jest": "^29.5.14",       "@types/supertest": "^6.0.3",       "jest": "^29.7.0",       "nodemon": "^3.1.9",       "prisma": "^6.5.0",       "supertest": "^7.1.1"     }   }      
-     ```  
+   {
+     "name": "backend",
+     "version": "1.0.0",
+     "description": "",
+     "main": "index.js",
+     "scripts": {
+       "dev": "nodemon src/index.js",
+       "start": "node src/index.js",
+       "test": "jest --runInBand --forceExit",
+       "test:watch": "jest --watch --runInBand",
+       "test:coverage": "jest --coverage --runInBand --forceExit",
+       "test:ci": "jest --coverage --watchAll=false --runInBand --forceExit"
+     },
+     "jest": {
+       "testEnvironment": "node",
+       "setupFilesAfterEnv": [
+         "<rootDir>/tests/setup.js"
+       ],
+       "testMatch": [
+         "<rootDir>/tests/**/*.test.js"
+       ],
+       "collectCoverageFrom": [
+         "src/**/*.js",
+         "!src/index.js",
+         "!src/app.js",
+         "!src/config/**",
+         "!src/middleware/upload.js"
+       ],
+       "coverageDirectory": "coverage",
+       "coverageReporters": [
+         "text",
+         "lcov",
+         "html"
+       ],
+       "testTimeout": 30000
+     },
+     "prisma": {
+       "seed": "node prisma/seed.js"
+     },
+     "keywords": [],
+     "author": "",
+     "license": "ISC",
+     "type": "commonjs",
+     "dependencies": {
+       "@prisma/client": "^6.5.0",
+       "@supabase/supabase-js": "^2.49.3",
+       "cookie-parser": "^1.4.7",
+       "cors": "^2.8.5",
+       "dotenv": "^16.4.7",
+       "express": "^4.21.2",
+       "express-session": "^1.18.1",
+       "firebase-admin": "^13.2.0",
+       "helmet": "^8.1.0",
+       "jsonwebtoken": "^9.0.2",
+       "multer": "^2.0.0",
+       "node-cron": "^3.0.3",
+       "nodemailer": "^6.10.0",
+       "openai": "^5.0.1",
+       "passport": "^0.7.0",
+       "passport-facebook": "^3.0.0",
+       "passport-github2": "^0.1.12",
+       "passport-google-oauth20": "^2.0.0",
+       "passport-microsoft": "^2.1.0",
+       "sharp": "^0.34.2",
+       "stripe": "^18.1.0",
+       "uuid": "^11.1.0",
+       "zod": "^3.24.2",
+       "bcryptjs": "^2.4.3"
+     },
+     "devDependencies": {
+       "@types/jest": "^29.5.14",
+       "@types/supertest": "^6.0.3",
+       "jest": "^29.7.0",
+       "nodemon": "^3.1.9",
+       "prisma": "^6.5.0",
+       "supertest": "^7.1.1"
+     }
+   }
+   
+   ```
 
 3. Frontend package.json:
 
    ```json  
-   {  
-     "name": "frontend",     "version": "0.1.0",     "private": true,     "scripts": {       "dev": "next dev",       "build": "next build",       "start": "next start",       "lint": "next lint"     },     "dependencies": {       "@hookform/resolvers": "^5.0.0",       "@radix-ui/react-accordion": "^1.2.11",       "@radix-ui/react-alert-dialog": "^1.1.13",       "@radix-ui/react-avatar": "^1.1.3",       "@radix-ui/react-checkbox": "^1.2.3",       "@radix-ui/react-dialog": "^1.1.6",       "@radix-ui/react-dropdown-menu": "^2.1.6",       "@radix-ui/react-label": "^2.1.2",       "@radix-ui/react-popover": "^1.1.13",       "@radix-ui/react-progress": "^1.1.4",       "@radix-ui/react-radio-group": "^1.3.4",       "@radix-ui/react-scroll-area": "^1.2.6",       "@radix-ui/react-select": "^2.1.6",       "@radix-ui/react-separator": "^1.1.2",       "@radix-ui/react-slot": "^1.2.2",       "@radix-ui/react-switch": "^1.2.2",       "@radix-ui/react-tabs": "^1.1.4",       "@radix-ui/react-tooltip": "^1.1.8",       "@tanstack/react-table": "^8.21.3",       "axios": "^1.8.4",       "class-variance-authority": "^0.7.1",       "clsx": "^2.1.1",       "cmdk": "^1.1.1",       "cohere-ai": "^7.17.0",       "date-fns": "^3.6.0",       "firebase": "^11.5.0",       "js-cookie": "^3.0.5",       "jsonwebtoken": "^9.0.2",       "jwt-decode": "^4.0.0",       "lucide-react": "^0.485.0",       "motion": "^12.6.2",       "next": "15.2.4",       "next-themes": "^0.4.6",       "openai": "^5.0.1",       "react": "^18.2.0",       "react-day-picker": "^8.10.1",       "react-dom": "^18.2.0",       "react-hook-form": "^7.55.0",       "recharts": "^2.15.2",       "sonner": "^2.0.2",       "styled-components": "^6.1.17",       "tailwind-merge": "^3.0.2",       "tw-animate-css": "^1.2.5",       "zod": "^3.24.2"     },     "devDependencies": {       "@eslint/eslintrc": "^3",       "@tailwindcss/postcss": "^4",       "@types/js-cookie": "^3.0.6",       "@types/jsonwebtoken": "^9.0.9",       "@types/node": "^20",       "@types/react": "^19",       "@types/react-dom": "^19",       "cross-env": "^7.0.3",       "eslint": "^9",       "eslint-config-next": "15.2.4",       "tailwindcss": "^4",       "typescript": "^5"     }   }     
-      ```  
-
-   ---  
+   {
+     "name": "frontend",
+     "version": "0.1.0",
+     "private": true,
+     "scripts": {
+       "dev": "next dev",
+       "build": "next build",
+       "start": "next start",
+       "lint": "next lint"
+     },
+     "dependencies": {
+       "@hookform/resolvers": "^5.0.0",
+       "@radix-ui/react-accordion": "^1.2.11",
+       "@radix-ui/react-alert-dialog": "^1.1.13",
+       "@radix-ui/react-avatar": "^1.1.3",
+       "@radix-ui/react-checkbox": "^1.2.3",
+       "@radix-ui/react-dialog": "^1.1.6",
+       "@radix-ui/react-dropdown-menu": "^2.1.6",
+       "@radix-ui/react-label": "^2.1.2",
+       "@radix-ui/react-popover": "^1.1.13",
+       "@radix-ui/react-progress": "^1.1.4",
+       "@radix-ui/react-radio-group": "^1.3.4",
+       "@radix-ui/react-scroll-area": "^1.2.6",
+       "@radix-ui/react-select": "^2.1.6",
+       "@radix-ui/react-separator": "^1.1.2",
+       "@radix-ui/react-slot": "^1.2.2",
+       "@radix-ui/react-switch": "^1.2.2",
+       "@radix-ui/react-tabs": "^1.1.4",
+       "@radix-ui/react-tooltip": "^1.1.8",
+       "@tanstack/react-table": "^8.21.3",
+       "axios": "^1.8.4",
+       "class-variance-authority": "^0.7.1",
+       "clsx": "^2.1.1",
+       "cmdk": "^1.1.1",
+       "cohere-ai": "^7.17.0",
+       "date-fns": "^3.6.0",
+       "firebase": "^11.5.0",
+       "js-cookie": "^3.0.5",
+       "jsonwebtoken": "^9.0.2",
+       "jwt-decode": "^4.0.0",
+       "lucide-react": "^0.485.0",
+       "motion": "^12.6.2",
+       "next": "15.2.4",
+       "next-themes": "^0.4.6",
+       "openai": "^5.0.1",
+       "react": "^18.2.0",
+       "react-day-picker": "^8.10.1",
+       "react-dom": "^18.2.0",
+       "react-hook-form": "^7.55.0",
+       "recharts": "^2.15.2",
+       "sonner": "^2.0.2",
+       "styled-components": "^6.1.17",
+       "tailwind-merge": "^3.0.2",
+       "tw-animate-css": "^1.2.5",
+       "zod": "^3.24.2"
+     },
+     "devDependencies": {
+       "@eslint/eslintrc": "^3",
+       "@tailwindcss/postcss": "^4",
+       "@types/js-cookie": "^3.0.6",
+       "@types/jsonwebtoken": "^9.0.9",
+       "@types/node": "^20",
+       "@types/react": "^19",
+       "@types/react-dom": "^19",
+       "cross-env": "^7.0.3",
+       "eslint": "^9",
+       "eslint-config-next": "15.2.4",
+       "tailwindcss": "^4",
+       "typescript": "^5"
+     }
+   }
+   
+   ```
+   
+   ---
 # 5. Deployment
 
 Two different approaches were used to deploy the frontend and backend. To deploy our frontend, we used Vercel because our web application uses Next.js as the framework. Since Vercel is optimized for frontend deployment, we turned to Render for the backend instead, as it supports long-running server processes and has a generous free tier we could use. For the frontend, we deployed directly from the git repository forked to my github as Vercel needed the permission of the organization owner to access the repo. For the backend, we deployed using a docker image I had pushed to my dockerhub. As the most stable distribution, we used Debian to ensure compatibility, especially with packages like `bcrypt`, which failed to build properly when we tried it on Alpine. We also included a `.dockerignore` file to exclude unnecessary files and reduce build time, as the initial builds were taking too long.
@@ -950,7 +1109,7 @@ COPY --from=builder --chown=nodejs:nodejs /app/src ./src
 USER nodejs  
 EXPOSE ${PORT}  
 CMD ["sh", "-c", "npx prisma migrate deploy && npm start"]
-```  
+```
 
 **`.dockerignore` :**
 
@@ -989,7 +1148,7 @@ build
 # Test coverage reports  
 coverage  
 lcov-report 
-```  
+```
 
 ### Proof of successful containerization
 
@@ -1028,7 +1187,7 @@ charissa@LAPTOP-65FOE8UH:/mnt/c/Users/USER/Documents/My Files/Uni Stuff/Y2_Sem2/
  => => exporting layers                                                                                                                        0.1s 
  => => writing image sha256:34153b1fa3e342b17da1929771a1d04aca966c811498a53fbeaa632f6b0ca157                                                   0.0s 
  => => naming to docker.io/chromics/sustracker-backend:v2.0   
-```  
+```
 
 **Dockerhub:**
 

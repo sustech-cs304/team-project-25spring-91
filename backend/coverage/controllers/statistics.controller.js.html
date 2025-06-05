@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">30% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>3/10</span>
+                <span class='fraction'>10/10</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/2</span>
+                <span class='fraction'>2/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">30% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>3/10</span>
+                <span class='fraction'>10/10</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -98,23 +98,23 @@
 <span class="cline-any cline-yes">15x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -126,24 +126,24 @@ const { statisticsService } = require('../services/statistics.service');
 &nbsp;
 const statisticsController = {
   // Get dashboard statistics
-  getDashboardStatistics: <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {
-    const userId = <span class="cstat-no" title="statement not covered" >req.user.id;</span>
-    const statistics = <span class="cstat-no" title="statement not covered" >await statisticsService.getDashboardStatistics(userId);</span>
+  getDashboardStatistics: async (req, res) =&gt; {
+    const userId = req.user.id;
+    const statistics = await statisticsService.getDashboardStatistics(userId);
     
-<span class="cstat-no" title="statement not covered" >    res.status(200).json({</span>
+    res.status(200).json({
       status: 'success',
       data: statistics
     });
   },
   
   // Getting exercise progress for a specific exercise
-  getExerciseProgress: <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {
-    const userId = <span class="cstat-no" title="statement not covered" >req.user.id;</span>
-    const exerciseId = <span class="cstat-no" title="statement not covered" >parseInt(req.params.exerciseId);</span>
+  getExerciseProgress: async (req, res) =&gt; {
+    const userId = req.user.id;
+    const exerciseId = parseInt(req.params.exerciseId);
     
-    const progress = <span class="cstat-no" title="statement not covered" >await statisticsService.getExerciseProgress(userId, exerciseId);</span>
+    const progress = await statisticsService.getExerciseProgress(userId, exerciseId);
     
-<span class="cstat-no" title="statement not covered" >    res.status(200).json({</span>
+    res.status(200).json({
       status: 'success',
       data: progress
     });
@@ -157,7 +157,7 @@ module.exports = { statisticsController };</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-06-05T00:31:37.082Z
+                at 2025-06-05T00:00:28.666Z
             </div>
         <script src="../prettify.js"></script>
         <script>

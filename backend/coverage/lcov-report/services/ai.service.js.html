@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">18.75% </span>
+                <span class="strong">46.25% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>15/80</span>
+                <span class='fraction'>37/80</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">23.68% </span>
+                <span class="strong">52.63% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>9/38</span>
+                <span class='fraction'>20/38</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">80% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/5</span>
+                <span class='fraction'>4/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">20.54% </span>
+                <span class="strong">46.57% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>15/73</span>
+                <span class='fraction'>34/73</span>
             </div>
         
             
@@ -351,44 +351,44 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -515,45 +515,45 @@ const aiService = {
     }
   },
 &nbsp;
-  createInteraction: <span class="fstat-no" title="function not covered" >as</span>ync (userId, data) =&gt; {
-    const { prompt, response, interactionType } = <span class="cstat-no" title="statement not covered" >data;</span>
-<span class="cstat-no" title="statement not covered" >    return prisma.aiInteraction.create({</span>
+  createInteraction: async (userId, data) =&gt; {
+    const { prompt, response, interactionType } = data;
+    return prisma.aiInteraction.create({
       data: { userId, prompt, response, interactionType },
       select: { id: true, userId: true, prompt: true, response: true, interactionType: true, createdAt: true }
     });
   },
 &nbsp;
-  getUserInteractions: <span class="fstat-no" title="function not covered" >as</span>ync (userId, { page = <span class="branch-0 cbranch-no" title="branch not covered" >1,</span> limit = <span class="branch-0 cbranch-no" title="branch not covered" >10,</span> interactionType }) =&gt; {
-    const skip = <span class="cstat-no" title="statement not covered" >(page - 1) * limit;</span>
-    const where = <span class="cstat-no" title="statement not covered" >{ userId };</span>
-<span class="cstat-no" title="statement not covered" >    if (interactionType) {</span>
-<span class="cstat-no" title="statement not covered" >      where.interactionType = { contains: interactionType, mode: 'insensitive' };</span>
+  getUserInteractions: async (userId, { page = 1, limit = 10, interactionType }) =&gt; {
+    const skip = (page - 1) * limit;
+    const where = { userId };
+    if (interactionType) {
+      where.interactionType = { contains: interactionType, mode: 'insensitive' };
     }
-    const totalItems = <span class="cstat-no" title="statement not covered" >await prisma.aiInteraction.count({ where });</span>
-    const totalPages = <span class="cstat-no" title="statement not covered" >Math.ceil(totalItems / limit);</span>
-    const interactions = <span class="cstat-no" title="statement not covered" >await prisma.aiInteraction.findMany({</span>
+    const totalItems = await prisma.aiInteraction.count({ where });
+    const totalPages = Math.ceil(totalItems / limit);
+    const interactions = await prisma.aiInteraction.findMany({
       where, orderBy: { createdAt: 'desc' }, skip, take: limit,
       select: { id: true, prompt: true, response: true, interactionType: true, createdAt: true }
     });
-<span class="cstat-no" title="statement not covered" >    return { interactions, pagination: { page, limit, totalPages, totalItems } };</span>
+    return { interactions, pagination: { page, limit, totalPages, totalItems } };
   },
 &nbsp;
-  getInteractionById: <span class="fstat-no" title="function not covered" >as</span>ync (userId, interactionId) =&gt; {
-    const interaction = <span class="cstat-no" title="statement not covered" >await prisma.aiInteraction.findUnique({</span>
+  getInteractionById: async (userId, interactionId) =&gt; {
+    const interaction = await prisma.aiInteraction.findUnique({
       where: { id: interactionId },
       select: { id: true, userId: true, prompt: true, response: true, interactionType: true, createdAt: true }
     });
-<span class="cstat-no" title="statement not covered" >    if (!interaction) <span class="cstat-no" title="statement not covered" >throw new ApiError(404, 'AI interaction not found');</span></span>
-<span class="cstat-no" title="statement not covered" >    if (interaction.userId !== userId) <span class="cstat-no" title="statement not covered" >throw new ApiError(403, 'You do not have permission to view this interaction');</span></span>
-<span class="cstat-no" title="statement not covered" >    return interaction;</span>
+    if (!interaction) throw new ApiError(404, 'AI interaction not found');
+    if (interaction.userId !== userId) throw new ApiError(403, 'You do not have permission to view this interaction');
+    return interaction;
   },
 &nbsp;
-  deleteInteraction: <span class="fstat-no" title="function not covered" >as</span>ync (userId, interactionId) =&gt; {
-    const interaction = <span class="cstat-no" title="statement not covered" >await prisma.aiInteraction.findUnique({ where: { id: interactionId } });</span>
-<span class="cstat-no" title="statement not covered" >    if (!interaction) <span class="cstat-no" title="statement not covered" >throw new ApiError(404, 'AI interaction not found');</span></span>
-<span class="cstat-no" title="statement not covered" >    if (interaction.userId !== userId) <span class="cstat-no" title="statement not covered" >throw new ApiError(403, 'You do not have permission to delete this interaction');</span></span>
-<span class="cstat-no" title="statement not covered" >    await prisma.aiInteraction.delete({ where: { id: interactionId } });</span>
-<span class="cstat-no" title="statement not covered" >    return true;</span>
+  deleteInteraction: async (userId, interactionId) =&gt; {
+    const interaction = await prisma.aiInteraction.findUnique({ where: { id: interactionId } });
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!interaction) <span class="cstat-no" title="statement not covered" >throw new ApiError(404, 'AI interaction not found');</span>
+    if (interaction.userId !== userId) throw new ApiError(403, 'You do not have permission to delete this interaction');
+    await prisma.aiInteraction.delete({ where: { id: interactionId } });
+    return true;
   },
 };
 &nbsp;
@@ -565,7 +565,7 @@ module.exports = { aiService };
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-06-05T00:31:36.879Z
+                at 2025-06-05T00:00:27.868Z
             </div>
         <script src="../prettify.js"></script>
         <script>
