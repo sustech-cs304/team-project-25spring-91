@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">66.66% </span>
+                <span class="strong">16.66% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>12/18</span>
+                <span class='fraction'>3/18</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">33.33% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>4/12</span>
+                <span class='fraction'>0/12</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">60% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>9/15</span>
+                <span class='fraction'>0/15</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">66.66% </span>
+                <span class="strong">16.66% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>12/18</span>
+                <span class='fraction'>3/18</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -242,7 +242,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -269,7 +269,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -278,7 +278,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -317,7 +317,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -326,7 +326,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -342,19 +342,19 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -398,7 +398,7 @@ const competitionSchemas = {
       imageUrl: z.string().url().optional(),
       maxParticipants: z.number().int().positive().optional(),
       isActive: z.boolean().optional().default(true)
-    }).refine(data =&gt; new Date(data.startDate) &lt; new Date(data.endDate), {
+    }).refine(<span class="fstat-no" title="function not covered" >da</span>ta =&gt; <span class="cstat-no" title="statement not covered" >new Date(data.startDate) &lt; new Date(data.endDate),</span> {
       message: 'End date must be after start date',
       path: ['endDate']
     })
@@ -425,7 +425,7 @@ const competitionSchemas = {
   // Get competition by ID
   getCompetition: z.object({
     params: z.object({
-      id: z.string().refine(val =&gt; !isNaN(parseInt(val)), {
+      id: z.string().refine(<span class="fstat-no" title="function not covered" >va</span>l =&gt; <span class="cstat-no" title="statement not covered" >!isNaN(parseInt(val)),</span> {
         message: 'Competition ID must be a number'
       })
     })
@@ -434,7 +434,7 @@ const competitionSchemas = {
   // Create task for a competition
   createTask: z.object({
     params: z.object({
-      id: z.string().refine(val =&gt; !isNaN(parseInt(val)), {
+      id: z.string().refine(<span class="fstat-no" title="function not covered" >va</span>l =&gt; <span class="cstat-no" title="statement not covered" >!isNaN(parseInt(val)),</span> {
         message: 'Competition ID must be a number'
       })
     }),
@@ -473,7 +473,7 @@ const competitionSchemas = {
   // Join competition
   joinCompetition: z.object({
     params: z.object({
-      id: z.string().refine(val =&gt; !isNaN(parseInt(val)), {
+      id: z.string().refine(<span class="fstat-no" title="function not covered" >va</span>l =&gt; <span class="cstat-no" title="statement not covered" >!isNaN(parseInt(val)),</span> {
         message: 'Competition ID must be a number'
       })
     })
@@ -482,7 +482,7 @@ const competitionSchemas = {
   // Update progress
   updateProgress: z.object({
     params: z.object({
-      taskId: z.string().refine(val =&gt; !isNaN(parseInt(val)), {
+      taskId: z.string().refine(<span class="fstat-no" title="function not covered" >va</span>l =&gt; <span class="cstat-no" title="statement not covered" >!isNaN(parseInt(val)),</span> {
         message: 'Task ID must be a number'
       })
     }),
@@ -498,19 +498,19 @@ const competitionSchemas = {
   // Get leaderboard
   getLeaderboard: z.object({
     params: z.object({
-      id: z.string().refine(val =&gt; !isNaN(parseInt(val)), {
+      id: z.string().refine(<span class="fstat-no" title="function not covered" >va</span>l =&gt; <span class="cstat-no" title="statement not covered" >!isNaN(parseInt(val)),</span> {
         message: 'Competition ID must be a number'
       })
     }),
     query: z.object({
-      limit: z.string().optional().transform(val =&gt; val ? parseInt(val) : 10),
-      page: z.string().optional().transform(val =&gt; val ? parseInt(val) : 1)
+      limit: z.string().optional().transform(<span class="fstat-no" title="function not covered" >va</span>l =&gt; <span class="cstat-no" title="statement not covered" >val ? parseInt(val) : 10)</span>,
+      page: z.string().optional().transform(<span class="fstat-no" title="function not covered" >va</span>l =&gt; <span class="cstat-no" title="statement not covered" >val ? parseInt(val) : 1)</span>
     })
   }),
 &nbsp;
   getCompetitionTasks: z.object({
     params: z.object({
-      competitionId: z.string().refine((val) =&gt; !isNaN(parseInt(val)), {
+      competitionId: z.string().refine(<span class="fstat-no" title="function not covered" >(v</span>al) =&gt; <span class="cstat-no" title="statement not covered" >!isNaN(parseInt(val)),</span> {
         message: 'Competition ID must be a number',
       }),
     }),
@@ -538,7 +538,7 @@ module.exports = { competitionSchemas };</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-06-04T22:48:37.553Z
+                at 2025-06-05T00:31:36.879Z
             </div>
         <script src="../prettify.js"></script>
         <script>

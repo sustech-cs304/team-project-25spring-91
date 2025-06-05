@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">48% </span>
+                <span class="strong">20% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>12/25</span>
+                <span class='fraction'>5/25</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">8.33% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>1/12</span>
+                <span class='fraction'>0/12</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">66.66% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>2/3</span>
+                <span class='fraction'>0/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">48% </span>
+                <span class="strong">20% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>12/25</span>
+                <span class='fraction'>5/25</span>
             </div>
         
             
@@ -167,25 +167,25 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">15x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -263,26 +263,26 @@ const { ApiError } = require('../utils/ApiError');
 const jwt = require('jsonwebtoken');
 &nbsp;
 const authController = {
-  register: async (req, res) =&gt; {
-    const userData = req.body;
-    const result = await authService.registerUser(userData);
+  register: <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {
+    const userData = <span class="cstat-no" title="statement not covered" >req.body;</span>
+    const result = <span class="cstat-no" title="statement not covered" >await authService.registerUser(userData);</span>
     
-    res.status(201).json({
+<span class="cstat-no" title="statement not covered" >    res.status(201).json({</span>
       status: 'success',
       message: 'User registered successfully',
       data: result
     });
   },
   
-  login: async (req, res) =&gt; {
-    const { email, password } = req.body;
-    const result = await authService.loginUser(email, password);
+  login: <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {
+    const { email, password } = <span class="cstat-no" title="statement not covered" >req.body;</span>
+    const result = <span class="cstat-no" title="statement not covered" >await authService.loginUser(email, password);</span>
     
-    <span class="missing-if-branch" title="if path not taken" >I</span>if (!result) {
+<span class="cstat-no" title="statement not covered" >    if (!result) {</span>
 <span class="cstat-no" title="statement not covered" >      throw new ApiError(401, 'Invalid credentials');</span>
     }
     
-    res.status(200).json({
+<span class="cstat-no" title="statement not covered" >    res.status(200).json({</span>
       status: 'success',
       message: 'Login successful',
       data: result
@@ -361,7 +361,7 @@ module.exports = { authController };
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-06-04T22:48:37.857Z
+                at 2025-06-05T00:31:37.082Z
             </div>
         <script src="../prettify.js"></script>
         <script>

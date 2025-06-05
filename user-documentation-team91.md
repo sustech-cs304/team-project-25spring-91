@@ -60,9 +60,44 @@ Need to make a change? No problem—you can edit previously added workouts at an
 
 Finding the right gym has never been easier. Explore a variety of gyms available on our platform and book memberships or classes that align with your schedule and fitness preferences—all in just a few taps.
 
+![Example Image](./images/gym-booking-1.png)
+
+**Gym Membership Booking:**
+
+Join a gym's membership program by clicking the 'Join' button for your desired gym. The dialog below will appear and you read through the details of each membership plan. Once you choose the membership you'd like to subscribe to, select it and proceed with the 'Next' button.
+
+![Example Image](./images/gym-booking-5.png)
+
+It will take you to the payment screen shown below where you can insert your card information or pay with link.
+
+![Example Image](./images/gym-booking-6.png)
+
+
+**Class Session Booking:**
+
+Book a class by clicking the 'Book' button for your desired gym. It will take you to the page shown below, detailing all the classes available to you as a member of the gym. Select 'View Schedule' to see all the available schedules for a class.
+
+![Example Image](./images/gym-booking-2.png)
+
+The dialog containing the available sessions will appear as below, and you can book the session that fits your schedule with the instructor of your choice.
+
+![Example Image](./images/gym-booking-3.png)
+
 ### My Bookings
 
 Stay organized and in control. This page gives you a complete overview of your gym memberships and class reservations, making it easy to view, manage, or update your bookings anytime.
+
+![Example Image](./images/my-bookings-1.png)
+
+Clicking the 'Booking' or 'Membership' tabs lets you view your existing bookings and memberships respectively. You can view the details of each type of booking and cancel any booking directly from this page.
+
+**Bookings section:**
+
+![Example Image](./images/gym-booking-7.png)
+
+**Memberships section:**
+
+![Example Image](./images/my-bookings-2.png)
 
 ### Log Meals
 
@@ -90,10 +125,37 @@ Want to review what you’ve eaten? Just tap any meal card to view its full deta
 
 ![diet edit](./images/diet-edit.png)
 
-
 ### Competitions
 
-Push your limits and have fun! Join fitness challenges and compete with other users to stay motivated, earn rewards, and celebrate your achievements along the way.
+Join exciting competitions to stay motivated, earn rewards, and celebrate your achievements. Compete with other users and track your progress as you go.
+
+Each competition features a progress bar that fills up as you complete subtasks and earn points. A dynamic leaderboard keeps you updated on the top performers.
+
+On the Competitions page, you’ll find three tabs to help you stay organized:
+
+- **Ongoing** – Competitions you’re currently participating in  
+  ![Example Image](./images/competition-1.png)
+
+- **Available** – New competitions you can join  
+  ![Example Image](./images/competition-2.png)
+
+- **Completed** – Competitions you’ve finished
+
+  ![Example Image](./images/competition-3.png)
+
+
+For each competition, you can click the 'View Details' button to get detailed information about each competition, as well as a quick view on your progress in it.
+
+![Example Image](./images/competition-4.png)
+
+When you have made progress in a subtask, you can update your progress here by clicking the 'Update Progress' button for each subtask. If a task has been completed, it will be marked as complete.
+
+![Example Image](./images/competition-5.png)
+
+You can also view your ranking in each competition from the leaderboard tab!
+
+![Example Image](./images/competition-6%201.png)
+
 
 ### Ask AI
 
@@ -136,15 +198,46 @@ As a gym owner, you’ll have access to a set of powerful tools designed to help
 
 Your personalized dashboard gives you a clear view of all your registered gyms and allows you to easily manage and update gym information, including memberships, classes, and competitions.
 
+![Example Image](./images/owner-dashboard.png)
+
+When you select the 'Update' button, there are three tabs you can update your gym information in:
+
+- **Add Subscription**
+  In the Add Subscription tab, you can create customized subscription plans tailored to your gym’s offerings. You’ll be able to specify the subscription name, duration, price, and a detailed description. Additionally, you can list out the unique features and benefits that come with the subscription, allowing users to clearly understand the value they’re getting when they sign up.
+
+  ![Example Image](./images/owner-dashboard-1.png)
+
+- **Add Gym Class**
+  The Add Gym Class tab lets you set up and personalize the classes your gym offers. You can enter the class name, set a maximum capacity, choose the duration in minutes, and define the difficulty level. You can also provide a description, indicate whether the class is exclusive to gym membership holders, upload a representative image, and add detailed schedules that include session times and instructor names to ensure everything is well-organized and informative.
+
+  ![Example Image](./images/owner-dashboard-2.png)
+
+- **Add Competition**
+  In the Add Competition tab, you can create and customize fitness competitions for your community. You’ll be able to input the competition’s name, start and end dates, maximum number of participants, a description, and an image to visually represent it. You can also define the structure of the competition by adding a set of tasks that participants must complete, helping keep the challenge engaging and rewarding.
+
+  ![Example Image](./images/owner-dashboard-3.png)
+
+  When you click the "Add Tasks" button in the Add Competition tab, a dialog appears where you can define the details of a new task. In this form, you can select an exercise category, enter the task name, choose the performance metric and unit, set a target value, assign a point value, and provide a clear task description. This allows you to create meaningful and measurable goals for participants within your competition.
+
+  ![Example Image](./images/owner-dashboard-4.png)
+
 ### Create Gym
 
+When creating a new gym, you can enter all of your facility’s essential details—such as its name, location, and amenities—in just a few simple steps. This initial setup allows you to establish your gym profile quickly, and because it’s fully customizable, you can revisit and update any information at any time in the Owner Dashboard section. Whether you’re just getting started or refining your gym’s offerings, the Create Gym feature makes it easy to build and personalize your presence on the platform.
+
+![Example Image](./images/create-gym.png)
 
 ### View Competitions
 
+The View Competitions page allows you to see all the competitions you’ve created in one organized space. It provides a clear overview of each competition’s status, including whether it’s upcoming or active. From this page, you can easily manage your competitions, check participants’ progress, and make any necessary edits to keep your challenges engaging and up to date.
+
+![Example Image](./images/view-competitions.png)
 
 ### View Classes
 
+The View Classes page is your central hub for managing the classes you’ve created. It displays key information such as class names and schedules, giving you quick access to everything you need to oversee your gym’s offerings. With intuitive controls, this page makes it simple to track update class details or make adjustments as your schedule evolves.
 
+![Example Image](./images/view-classes.png)
 
 # Log in as an Admin
 
@@ -153,7 +246,7 @@ The admin role was designed to help oversee the health and growth of the SUSTrac
 To log in as an administrator, you'll need to use this account when signing in:
 
 > email address: test@example.com
-> 
+>
 > password: password123
 
 ## Features
@@ -162,4 +255,13 @@ As an administrator, you’ll have access to valuable data insights that help yo
 
 ### Admin Dashboard
 
+The **Analytics** section provides a clear overview of key platform metrics, including the total number of gyms, users, and gym owners. It also features a bar chart displaying user sign-up trends by month, offering valuable insights into platform growth over time.
+
 ![Example Image](./images/admin-dashboard 1.png)
+
+Below, the **User Table** lists detailed information about all registered accounts. You can easily filter users by role or search for specific entries using the built-in search bar, making it simple to manage and monitor user activity.
+
+![Example Image](./images/admin-dashboard-2.png)
+
+
+As an administrator, you are also able the view all gyms or create a gym as detailed in the user and gym owner's section.

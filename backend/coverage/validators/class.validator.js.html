@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">80% </span>
+                <span class="strong">20% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>12/15</span>
+                <span class='fraction'>3/15</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">50% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>3/6</span>
+                <span class='fraction'>0/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">75% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>9/12</span>
+                <span class='fraction'>0/12</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">80% </span>
+                <span class="strong">20% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>12/15</span>
+                <span class='fraction'>3/15</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -183,26 +183,19 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -220,7 +213,14 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -233,14 +233,14 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -248,7 +248,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -296,19 +296,19 @@ const classSchemas = {
 &nbsp;
   getClass: z.object({
     params: z.object({
-      id: z.string().refine(val =&gt; !isNaN(parseInt(val)), {
+      id: z.string().refine(<span class="fstat-no" title="function not covered" >va</span>l =&gt; <span class="cstat-no" title="statement not covered" >!isNaN(parseInt(val)),</span> {
         message: 'Class ID must be a number'
       })
     })
   }),
 &nbsp;
   listAllGymClassesQuery: z.object({
-      gymId: z.string().optional().transform(val =&gt; (val ? <span class="branch-0 cbranch-no" title="branch not covered" >parseInt(val) </span>: undefined)),
+      gymId: z.string().optional().transform(<span class="fstat-no" title="function not covered" >va</span>l =&gt; (<span class="cstat-no" title="statement not covered" >val ? parseInt(val) : undefined)</span>),
       difficultyLevel: z.string().optional(),
       search: z.string().optional(),
-      page: z.string().optional().transform(val =&gt; (val ? <span class="branch-0 cbranch-no" title="branch not covered" >parseInt(val) </span>: 1)),
-      limit: z.string().optional().transform(val =&gt; (val ? <span class="branch-0 cbranch-no" title="branch not covered" >parseInt(val) </span>: 10)),
-      paginate: z.string().optional().transform(val =&gt; val !== 'false'), // Defaults to true
+      page: z.string().optional().transform(<span class="fstat-no" title="function not covered" >va</span>l =&gt; (<span class="cstat-no" title="statement not covered" >val ? parseInt(val) : 1)</span>),
+      limit: z.string().optional().transform(<span class="fstat-no" title="function not covered" >va</span>l =&gt; (<span class="cstat-no" title="statement not covered" >val ? parseInt(val) : 10)</span>),
+      paginate: z.string().optional().transform(<span class="fstat-no" title="function not covered" >va</span>l =&gt; <span class="cstat-no" title="statement not covered" >val !== 'false')</span>, // Defaults to true
     }),
   
   createClass: z.object({
@@ -333,7 +333,7 @@ const classSchemas = {
   
   updateClass: z.object({
     params: z.object({
-      id: z.string().refine(val =&gt; !isNaN(parseInt(val)), {
+      id: z.string().refine(<span class="fstat-no" title="function not covered" >va</span>l =&gt; <span class="cstat-no" title="statement not covered" >!isNaN(parseInt(val)),</span> {
         message: 'Class ID must be a number'
       })
     }),
@@ -346,14 +346,14 @@ const classSchemas = {
       difficultyLevel: z.enum(['beginner', 'intermediate', 'advanced']).optional(),
       imageUrl: z.string().url().optional(),
       isActive: z.boolean().optional()
-    }).refine(data =&gt; Object.keys(data).length &gt; 0, {
+    }).refine(<span class="fstat-no" title="function not covered" >da</span>ta =&gt; <span class="cstat-no" title="statement not covered" >Object.keys(data).length &gt; 0,</span> {
       message: 'At least one field must be provided for update'
     })
   }),
   
   deleteClass: z.object({
     params: z.object({
-      id: z.string().refine(val =&gt; !isNaN(parseInt(val)), {
+      id: z.string().refine(<span class="fstat-no" title="function not covered" >va</span>l =&gt; <span class="cstat-no" title="statement not covered" >!isNaN(parseInt(val)),</span> {
         message: 'Class ID must be a number'
       })
     })
@@ -361,7 +361,7 @@ const classSchemas = {
   
   createSchedule: z.object({
     params: z.object({
-      id: z.string().refine(val =&gt; !isNaN(parseInt(val)), {
+      id: z.string().refine(<span class="fstat-no" title="function not covered" >va</span>l =&gt; <span class="cstat-no" title="statement not covered" >!isNaN(parseInt(val)),</span> {
         message: 'Class ID must be a number'
       })
     }),
@@ -409,7 +409,7 @@ module.exports = { classSchemas };</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-06-04T22:48:37.857Z
+                at 2025-06-05T00:31:37.082Z
             </div>
         <script src="../prettify.js"></script>
         <script>
