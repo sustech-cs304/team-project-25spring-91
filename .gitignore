@@ -4,7 +4,7 @@ node_modules
 .pnp.js
 
 # testing
-/coverage
+frontend/coverage
 
 # next.js
 frontend/.next/
