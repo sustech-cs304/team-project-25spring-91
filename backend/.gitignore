@@ -39,3 +39,5 @@ uploads/gym-classes/*
 uploads/competitions/*
 uploads/users/*
 !uploads/*/.gitkeep
+
+/coverage
