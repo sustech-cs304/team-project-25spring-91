@@ -2,7 +2,7 @@
 
 #                                        **SUSTracker**
 
-### (CS307 Software Engineering Project)
+### (CS304 Software Engineering Project)
 
 </div>
 
