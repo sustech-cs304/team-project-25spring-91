@@ -1,10 +1,22 @@
 <div align=center>
 
+
 #                                        **SUSTracker**
 
 ### (CS304 Software Engineering Project)
 
 </div>
+
+####  
+
+- #### Project Proposal => [Detailed Project Proposal](./documents/ProjectProposal.pdf)
+
+- #### Sprint 1 Guidelines => [Detailed Sprint 1 Guidelines](./documents/cs304-sprint1.pdf)
+
+- #### Sprint 2 Guidelines =>[Detailed Sprint 2 Guidelines](./documents/cs304-sprint2.pdf)
+
+  #### 
+
 
 ### Description
 
@@ -113,11 +125,11 @@ All-in-one personal health assistant web application designed to help you stay m
 
 
 
-#### Detail User Documentation (including more features) => [User Documentation](./user-documentation-team91.md)
+#### Detailed User Documentation (including more features) => [User Documentation](./user-documentation-team91.md)
 
-#### Detail API Documentation (around 115 API endpoints) => [API Documentation](./documents/WorkoutTrackerAPIDocumentation.markdown)
+#### Detailed API Documentation (around 115 API endpoints) => [API Documentation](./documents/WorkoutTrackerAPIDocumentation.markdown)
 
-#### Detail Testing Documentation => [Testing Documentation](./documents/TestingDocumentation.md)
+#### Detailed Testing Documentation => [Testing Documentation](./documents/TestingDocumentation.md)
 
 
 
