@@ -196,7 +196,7 @@ Total Dependencies: 32
 # 2. Documentation
 
 ### (1) Documentation for end users
-[User Documentation](user-documentation-team91.md)
+[User Documentation](../user-documentation-team91.md)
 ### (2) Documentation for developers
 ## SUSTracker API Documentation
 
@@ -269,7 +269,7 @@ The API uses JSON Web Tokens (JWT) for session management and supports OAuth for
 -----
 ## API Endpoints
 
-We have a total of 130 API endpoints. We write the documentation for every endpoint. Refer to this link for detail => [View the API Guide](./documents/WorkoutTrackerAPIDocumentation.markdown)
+We have a total of 130 API endpoints. We write the documentation for every endpoint. Refer to this link for detail => [View the API Guide](./WorkoutTrackerAPIDocumentation.markdown)
 
 -----
 ## Data Models
@@ -597,7 +597,7 @@ backend/
 
 Below is a summary of each test file’s responsibilities and notable test cases.
 
-Since we have a total of 254 test cases, for each test case explanation, refer to this link => [View Testing Guide](./documents/TestingDocumentation.md)
+Since we have a total of 254 test cases, for each test case explanation, refer to this link => [View Testing Guide](./TestingDocumentation.md)
 
 ---
 ### Utilities (`utils/auth.js`)
@@ -680,9 +680,9 @@ to produce a detailed coverage report.
 ---
 ## Effectiveness of our tests
 
-![Example Image](./images/coloredTest.png)
+![Example Image](../images/coloredTest.png)
 
-![Example Image](./images/terminalTest.png)
+![Example Image](../images/terminalTest.png)
 
 ## Table Format for all testing files
 
@@ -1154,7 +1154,7 @@ lcov-report
 
 **Successful docker build:**
 
-![Example Image](./images/docker-build.png)
+![Example Image](../images/docker-build.png)
 
 Full message:
 
@@ -1191,5 +1191,5 @@ charissa@LAPTOP-65FOE8UH:/mnt/c/Users/USER/Documents/My Files/Uni Stuff/Y2_Sem2/
 
 **Dockerhub:**
 
-![Example Image](./images/docker-push.png)
-![Example Image](./images/dockerhub.png)
+![Example Image](../images/docker-push.png)
+![Example Image](../images/dockerhub.png)
